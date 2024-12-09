@@ -13,10 +13,9 @@ public class Coupon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long coupon_id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coupon_policy_id", nullable = false)
+    @ManyToOne
     @NotNull
-    private Coupon_Policy couponPolicy;
+    private CouponPolicy couponPolicy;
 
     @NotNull
     private String coupon_name;

@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 @Entity
-public class Coupon_Policy {
+public class CouponPolicy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
