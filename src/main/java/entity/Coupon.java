@@ -1,6 +1,5 @@
 package entity;
 
-import entity.eum.Target;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -21,7 +20,7 @@ public class Coupon {
     private String coupon_name;
 
     @NotNull
-    private Target target;
+    private String coupon_target;
 
     private int coupon_target_id;
 
