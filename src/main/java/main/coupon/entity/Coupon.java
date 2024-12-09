@@ -1,4 +1,4 @@
-package entity;
+package main.coupon.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
