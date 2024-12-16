@@ -3,39 +3,29 @@ POST http://localhost:8083/api/policies/create
 Content-Type: application/json
 
 {
-  "coupon_policy_name": "Winter Discount",
-  "min_purchase_amount": 10000,
-  "discount_type": "PERCENTAGE",
-  "discount_value": 10,
-  "max_discount_amount": 5000,
-  "is_deleted": false,
-  "event_type": "Winter Sale",
-  "created_at": "2024-12-15T10:00:00+09:00"
+  "couponPolicyName": "Winter Discount",
+  "minPurchaseAmount": 10000,
+  "discountType": "PERCENTAGE",
+  "discountValue": 10,
+  "maxDiscountAmount": 5000,
+  "eventType": "Winter Sale"
 }
-
-
-###
 
 ### 쿠폰 정책 수정 (PUT /api/policies/update/{policyId})
 PUT http://localhost:8083/api/policies/update/1
 Content-Type: application/json
 
 {
-  "coupon_policy_name": "Updated Winter Discount",
-  "min_purchase_amount": 15000,
-  "discount_type": "PERCENTAGE",
-  "discount_value": 15,
-  "max_discount_amount": 6000,
-  "is_deleted": false,
-  "event_type": "Holiday Sale",
-  "created_at": "2024-12-15T10:00:00+09:00"
+  "couponPolicyName": "Updated Winter Discount",
+  "minPurchaseAmount": 15000,
+  "discountType": "PERCENTAGE",
+  "discountValue": 15,
+  "maxDiscountAmount": 6000,
+  "eventType": "Holiday Sale"
 }
-###
 
 ### 모든 쿠폰 정책 조회 (GET /api/policies/all)
 GET http://localhost:8083/api/policies/all
-
-###
 
 ### 특정 쿠폰 정책 조회 (GET /api/policies/{policyId})
 GET http://localhost:8083/api/policies/1

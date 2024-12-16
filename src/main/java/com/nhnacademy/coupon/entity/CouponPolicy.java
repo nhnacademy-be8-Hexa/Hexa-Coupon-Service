@@ -1,73 +1,79 @@
 package com.nhnacademy.coupon.entity;
 
+import com.nhnacademy.coupon.entity.Dto.UpdateCouponPolicyDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.ZonedDateTime;
 
 @Entity
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 public class CouponPolicy {
 
-    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long coupon_policy_id;
+    private long couponPolicyId;
 
     @NotNull
-    private String coupon_policy_name;
+    private String couponPolicyName;
 
     @NotNull
-    private int min_purchase_amount;
+    private int minPurchaseAmount;
 
     @NotNull
-    private String discount_type;
+    private String discountType;
 
     @NotNull
-    private int discount_value;
+    private int discountValue;
 
-    @Setter
-    private int max_discount_amount;
-
-    @NotNull
-    private boolean is_deleted;
-
-    @Setter
-    private String event_type;
+    private int maxDiscountAmount;
 
     @NotNull
-    private ZonedDateTime created_at;
+    private boolean isDeleted = false;
 
-    public void setCoupon_policy_name(@NotNull String coupon_policy_name) {
-        this.coupon_policy_name = coupon_policy_name;
+    private String eventType;
+
+    @NotNull
+    private ZonedDateTime createdAt;
+
+    public CouponPolicy() {
+        this.isDeleted = false; // 기본값을 'false'로 설정
     }
 
-    public void setMin_purchase_amount(@NotNull int min_purchase_amount) {
-        this.min_purchase_amount = min_purchase_amount;
+    @Builder
+    public CouponPolicy(String couponPolicyName, int minPurchaseAmount, String discountType, int discountValue,
+                        int maxDiscountAmount, String eventType, ZonedDateTime createdAt) {
+        this.couponPolicyName = couponPolicyName;
+        this.minPurchaseAmount = minPurchaseAmount;
+        this.discountType = discountType;
+        this.discountValue = discountValue;
+        this.maxDiscountAmount = maxDiscountAmount;
+        this.isDeleted = false;  // 비활성화 상태는 'false'로 두고, 비활성화는 별도로 처리
+        this.eventType = eventType;
+        this.createdAt = createdAt != null ? createdAt : ZonedDateTime.now();  // 기존 생성일 유지
     }
 
-    public void setDiscount_type(@NotNull String discount_type) {
-        this.discount_type = discount_type;
+    // 새로운 정책을 생성하는 메서드
+    public static CouponPolicy of(UpdateCouponPolicyDTO updatedPolicyDTO) {
+        return CouponPolicy.builder()
+                .couponPolicyName(updatedPolicyDTO.couponPolicyName())  // 새로운 정책명
+                .minPurchaseAmount(updatedPolicyDTO.minPurchaseAmount()) // 새로운 최소 구매 금액
+                .discountType(updatedPolicyDTO.discountType())           // 새로운 할인 타입
+                .discountValue(updatedPolicyDTO.discountValue())         // 새로운 할인 값
+                .maxDiscountAmount(updatedPolicyDTO.maxDiscountAmount()) // 새로운 최대 할인 금액
+                .eventType(updatedPolicyDTO.eventType())                 // 새로운 이벤트 타입
+                .createdAt(ZonedDateTime.now())                           // 새로운 생성 시간
+                .build();
     }
 
-    public void setDiscount_value(@NotNull int discount_value) {
-        this.discount_value = discount_value;
+    // 기존 정책을 비활성화하는 메서드
+    public CouponPolicy markAsDeleted() {
+        this.isDeleted = true;  // 'isDeleted'를 true로 변경하여 비활성화 처리
+        return this;  // 변경된 객체를 반환
     }
 
-    public void setIs_deleted(@NotNull boolean is_deleted) {
-        this.is_deleted = is_deleted;
-    }
-
-    public void setCreated_at(@NotNull ZonedDateTime created_at) {
-        this.created_at = created_at;
-    }
 }

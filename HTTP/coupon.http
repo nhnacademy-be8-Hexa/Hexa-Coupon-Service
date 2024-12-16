@@ -1,6 +1,15 @@
 ### 쿠폰 생성 (POST /api/coupons/create)
-POST http://localhost:8083/api/coupons/create?couponPolicyId=1&couponName=Coupon1&couponTarget=Target1&couponTargetId=123&couponDeadline=2024-12-31T23:59:59Z
+POST http://localhost:8083/api/coupons/create
 Content-Type: application/json
+
+{
+  "couponPolicyId": 1,
+  "couponName": "Winter Promo",
+  "couponTarget": "Customer",
+  "couponTargetId": 12345,
+  "couponDeadline": "2025-12-31T23:59:59Z"
+}
+
 
 ### 쿠폰 조회 (GET /api/coupons/{couponId})
 GET http://localhost:8083/api/coupons/1

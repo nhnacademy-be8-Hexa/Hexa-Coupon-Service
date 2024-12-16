@@ -1,60 +1,85 @@
 package com.nhnacademy.coupon.entity;
 
+import com.nhnacademy.coupon.entity.Dto.CreatCouponDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.ZonedDateTime;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Coupon {
 
-    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long coupon_id;
+    private Long couponId;
 
     @ManyToOne
     @NotNull
     private CouponPolicy couponPolicy;
 
     @NotNull
-    private String coupon_name;
+    private String couponName;
 
     @NotNull
-    private String coupon_target;
+    private String couponTarget;
 
-    @Setter
-    private Long coupon_target_id;
+    private Long couponTargetId;
 
-    @Setter
-    private ZonedDateTime coupon_deadline;
+    private ZonedDateTime couponDeadline;
 
-    @Setter
-    private ZonedDateTime coupon_created_at;
+    private ZonedDateTime couponCreatedAt;
 
-    @Setter
-    private boolean coupon_is_active;
+    private boolean couponIsActive;
 
-    @Setter
-    private ZonedDateTime coupon_used_at;
+    private ZonedDateTime couponUsedAt;
 
-    public void setCouponPolicy(@NotNull CouponPolicy couponPolicy) {
+    @Builder
+    public Coupon(CouponPolicy couponPolicy, String couponName, String couponTarget, Long couponTargetId, ZonedDateTime couponDeadline) {
         this.couponPolicy = couponPolicy;
+        this.couponName = couponName;
+        this.couponTarget = couponTarget;
+        this.couponTargetId = couponTargetId;
+        this.couponDeadline = couponDeadline;
+        this.couponCreatedAt = ZonedDateTime.now();
+        this.couponIsActive = true;
+        this.couponUsedAt = null;
+
+        if (couponPolicy == null) {
+            throw new IllegalArgumentException("CouponPolicy must not be null");
+        }
+        if (couponName == null || couponName.isBlank()) {
+            throw new IllegalArgumentException("CouponName must not be null or empty");
+        }
+        if (couponTarget == null || couponTarget.isBlank()) {
+            throw new IllegalArgumentException("CouponTarget must not be null or empty");
+        }
+        if (couponDeadline == null) {
+            throw new IllegalArgumentException("CouponDeadline must not be null");
+        }
+
     }
 
-    public void setCoupon_name(@NotNull String coupon_name) {
-        this.coupon_name = coupon_name;
+    public static Coupon of(CreatCouponDTO couponDTO, CouponPolicy couponPolicy) {
+        return Coupon.builder()
+                .couponPolicy(couponPolicy)
+                .couponName(couponDTO.couponName())
+                .couponTarget(couponDTO.couponTarget())
+                .couponTargetId(couponDTO.couponTargetId())
+                .couponDeadline(couponDTO.couponDeadline())
+                .build();
     }
 
-    public void setCoupon_target(@NotNull String coupon_target) {
-        this.coupon_target = coupon_target;
+    public void markAsUsed(ZonedDateTime usedAt) {
+        if (this.couponUsedAt != null) {
+            throw new IllegalStateException("Coupon has already been used");
+        }
+        this.couponUsedAt = usedAt;
     }
 
+    public void deactivate() {
+        this.couponIsActive = false;
+    }
 }

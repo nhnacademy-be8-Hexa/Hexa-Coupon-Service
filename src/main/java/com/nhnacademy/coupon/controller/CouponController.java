@@ -1,5 +1,7 @@
 package com.nhnacademy.coupon.controller;
 
+import com.nhnacademy.coupon.entity.Dto.CreatCouponDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import com.nhnacademy.coupon.entity.Coupon;
 import com.nhnacademy.coupon.service.CouponService;
@@ -19,13 +21,9 @@ public class CouponController {
     // 쿠폰 생성
     @PostMapping("/create")
     public ResponseEntity<Coupon> createCoupon(
-            @RequestParam Long couponPolicyId,
-            @RequestParam String couponName,
-            @RequestParam String couponTarget,
-            @RequestParam Long couponTargetId,
-            @RequestParam ZonedDateTime couponDeadline) {
+            @RequestBody @Valid CreatCouponDTO creatCouponDTO) {
 
-        Coupon coupon = couponService.createCoupon(couponPolicyId, couponName, couponTarget, couponTargetId, couponDeadline);
+        Coupon coupon = couponService.createCoupon(creatCouponDTO);
         return ResponseEntity.ok(coupon);
     }
 
