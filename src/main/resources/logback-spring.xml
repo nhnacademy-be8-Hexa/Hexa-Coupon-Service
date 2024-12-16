@@ -19,7 +19,7 @@
 
 
     <!-- LogNCrashHttpAppender 선언 -->
-    <appender name="SYNC_NHN_LOG_CRASH_APPENDER" class="main.coupon.log.LogCrashAppender">
+    <appender name="SYNC_NHN_LOG_CRASH_APPENDER" class="com.nhnacademy.coupon.log.LogCrashAppender">
         <url>https://api-logncrash.cloud.toast.com/v2/log</url>
         <!-- ERROR 이상만 전송 -->
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
