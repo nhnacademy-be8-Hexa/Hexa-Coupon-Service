@@ -1,0 +1,44 @@
+### 쿠폰 정책 생성 (POST /api/policies/create)
+POST http://localhost:8083/api/policies/create
+Content-Type: application/json
+
+{
+  "coupon_policy_name": "Winter Discount",
+  "min_purchase_amount": 10000,
+  "discount_type": "PERCENTAGE",
+  "discount_value": 10,
+  "max_discount_amount": 5000,
+  "is_deleted": false,
+  "event_type": "Winter Sale",
+  "created_at": "2024-12-15T10:00:00+09:00"
+}
+
+
+###
+
+### 쿠폰 정책 수정 (PUT /api/policies/update/{policyId})
+PUT http://localhost:8083/api/policies/update/1
+Content-Type: application/json
+
+{
+  "coupon_policy_name": "Updated Winter Discount",
+  "min_purchase_amount": 15000,
+  "discount_type": "PERCENTAGE",
+  "discount_value": 15,
+  "max_discount_amount": 6000,
+  "is_deleted": false,
+  "event_type": "Holiday Sale",
+  "created_at": "2024-12-15T10:00:00+09:00"
+}
+###
+
+### 모든 쿠폰 정책 조회 (GET /api/policies/all)
+GET http://localhost:8083/api/policies/all
+
+###
+
+### 특정 쿠폰 정책 조회 (GET /api/policies/{policyId})
+GET http://localhost:8083/api/policies/1
+
+### 쿠폰 정책 삭제 (DELETE /api/policies/delete/{policyId})
+POST http://localhost:8083/api/policies/delete/1
