@@ -1,7 +1,7 @@
 package com.nhnacademy.coupon.controller;
 
 import com.nhnacademy.coupon.entity.CouponPolicy;
-import com.nhnacademy.coupon.entity.Dto.UpdateCouponPolicyDTO;
+import com.nhnacademy.coupon.entity.Dto.CouponPolicyRequestDTO;
 import com.nhnacademy.coupon.exception.CouponPolicyNotFoundException;
 import com.nhnacademy.coupon.exception.InvalidCouponPolicyRequestException;
 import com.nhnacademy.coupon.service.CouponPolicyService;
@@ -42,7 +42,7 @@ public class CouponPolicyControllerTest {
     @Test
     void createPolicy_ShouldReturnPolicy() throws Exception {
         // UpdateCouponPolicyDTO 객체 생성
-        UpdateCouponPolicyDTO dto = new UpdateCouponPolicyDTO(
+        CouponPolicyRequestDTO dto = new CouponPolicyRequestDTO(
                 "Winter Discount", 10000, "PERCENTAGE", 10, 5000, "Winter Sale"
         );
 
@@ -50,7 +50,7 @@ public class CouponPolicyControllerTest {
         CouponPolicy policy = CouponPolicy.of(dto);
 
         // 서비스에서 DTO로 CouponPolicy 객체가 반환되도록 설정
-        when(couponPolicyService.createPolicy(any(UpdateCouponPolicyDTO.class))).thenReturn(policy);
+        when(couponPolicyService.createPolicy(any(CouponPolicyRequestDTO.class))).thenReturn(policy);
 
         // POST 요청을 통해 쿠폰 정책 생성
         mockMvc.perform(post("/api/policies/create")
@@ -64,7 +64,7 @@ public class CouponPolicyControllerTest {
     @Test
     void updatePolicy_ShouldReturnUpdatedPolicy() throws Exception {
         // 기존 쿠폰 정책을 DTO로 생성
-        UpdateCouponPolicyDTO updatedDTO = new UpdateCouponPolicyDTO(
+        CouponPolicyRequestDTO updatedDTO = new CouponPolicyRequestDTO(
                 "Updated Winter Discount", 15000, "PERCENTAGE", 15, 6000, "Holiday Sale"
         );
 
@@ -72,7 +72,7 @@ public class CouponPolicyControllerTest {
         CouponPolicy updatedPolicy = CouponPolicy.of(updatedDTO);
 
         // 서비스에서 업데이트된 쿠폰 정책을 반환하도록 설정
-        when(couponPolicyService.updatePolicy(eq(1L), any(UpdateCouponPolicyDTO.class))).thenReturn(updatedPolicy);
+        when(couponPolicyService.updatePolicy(eq(1L), any(CouponPolicyRequestDTO.class))).thenReturn(updatedPolicy);
 
         // PUT 요청을 통해 쿠폰 정책 업데이트
         mockMvc.perform(put("/api/policies/update/1")
@@ -86,7 +86,7 @@ public class CouponPolicyControllerTest {
     @Test
     void getPolicyById_ShouldReturnPolicy() throws Exception {
         // UpdateCouponPolicyDTO 객체 생성
-        UpdateCouponPolicyDTO dto = new UpdateCouponPolicyDTO(
+        CouponPolicyRequestDTO dto = new CouponPolicyRequestDTO(
                 "Winter Discount", 10000, "PERCENTAGE", 10, 5000, "Winter Sale"
         );
 
@@ -141,7 +141,7 @@ public class CouponPolicyControllerTest {
         String invalidContent = "{\"couponPolicyName\": \"\", \"minPurchaseAmount\": -1000, \"discountType\": \"INVALID\", \"discountValue\": 0, \"maxDiscountAmount\": 0, \"eventType\": \"\"}";
 
         // InvalidCouponPolicyRequestException 발생하도록 설정
-        when(couponPolicyService.createPolicy(any(UpdateCouponPolicyDTO.class)))
+        when(couponPolicyService.createPolicy(any(CouponPolicyRequestDTO.class)))
                 .thenThrow(new InvalidCouponPolicyRequestException("Invalid coupon policy data"));
 
         // POST 요청을 통해 쿠폰 정책 생성
@@ -155,12 +155,12 @@ public class CouponPolicyControllerTest {
     @Test
     void updatePolicy_ShouldReturnNotFound_WhenCouponPolicyNotFound() throws Exception {
         // UpdateCouponPolicyDTO 객체 생성
-        UpdateCouponPolicyDTO updatedDTO = new UpdateCouponPolicyDTO(
+        CouponPolicyRequestDTO updatedDTO = new CouponPolicyRequestDTO(
                 "Updated Winter Discount", 15000, "PERCENTAGE", 15, 6000, "Holiday Sale"
         );
 
         // CouponPolicyNotFoundException 발생하도록 설정
-        when(couponPolicyService.updatePolicy(eq(1L), any(UpdateCouponPolicyDTO.class)))
+        when(couponPolicyService.updatePolicy(eq(1L), any(CouponPolicyRequestDTO.class)))
                 .thenThrow(new CouponPolicyNotFoundException(1L));
 
         // PUT 요청을 통해 쿠폰 정책 업데이트
@@ -199,7 +199,7 @@ public class CouponPolicyControllerTest {
         String invalidContent = "{\"couponPolicyName\": \"\", \"minPurchaseAmount\": -1000, \"discountType\": \"INVALID\", \"discountValue\": 0, \"maxDiscountAmount\": 0, \"eventType\": \"\"}";
 
         // InvalidCouponPolicyRequestException 발생하도록 설정
-        when(couponPolicyService.updatePolicy(eq(1L), any(UpdateCouponPolicyDTO.class)))
+        when(couponPolicyService.updatePolicy(eq(1L), any(CouponPolicyRequestDTO.class)))
                 .thenThrow(new InvalidCouponPolicyRequestException("Invalid coupon policy data"));
 
         // PUT 요청을 통해 쿠폰 정책 수정 (잘못된 데이터)

@@ -3,7 +3,7 @@ package com.nhnacademy.coupon.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.coupon.entity.Coupon;
 import com.nhnacademy.coupon.entity.CouponPolicy;
-import com.nhnacademy.coupon.entity.Dto.CreatCouponDTO;
+import com.nhnacademy.coupon.entity.Dto.CouponRequestDTO;
 import com.nhnacademy.coupon.exception.CouponNotFoundException;
 import com.nhnacademy.coupon.service.CouponService;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +51,7 @@ public class CouponControllerTest {
                 .createdAt(ZonedDateTime.now()) // 생성일 설정
                 .build();
 
-        CreatCouponDTO couponDTO = new CreatCouponDTO(
+        CouponRequestDTO couponDTO = new CouponRequestDTO(
                 1L,                              // couponPolicyId
                 "Summer Discount",               // couponName
                 "ALL",                           // couponTarget
@@ -65,7 +65,7 @@ public class CouponControllerTest {
 
     @Test
     void shouldReturnBadRequestWhenCountIsZeroOrNegative() throws Exception {
-        CreatCouponDTO couponDTO = new CreatCouponDTO(
+        CouponRequestDTO couponDTO = new CouponRequestDTO(
                 1L,
                 "Summer Discount",
                 "ALL",
@@ -93,7 +93,7 @@ public class CouponControllerTest {
     // 쿠폰 생성 테스트
     @Test
     void shouldCreateCouponsSuccessfullyWhenCountIsValid() throws Exception {
-        CreatCouponDTO couponDTO = new CreatCouponDTO(
+        CouponRequestDTO couponDTO = new CouponRequestDTO(
                 1L,
                 "Summer Discount",
                 "ALL",

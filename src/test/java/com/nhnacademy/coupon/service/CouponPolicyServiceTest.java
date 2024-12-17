@@ -1,6 +1,6 @@
 package com.nhnacademy.coupon.service;
 
-import com.nhnacademy.coupon.entity.Dto.UpdateCouponPolicyDTO;
+import com.nhnacademy.coupon.entity.Dto.CouponPolicyRequestDTO;
 import com.nhnacademy.coupon.entity.CouponPolicy;
 import com.nhnacademy.coupon.exception.CouponPolicyNotFoundException;
 import com.nhnacademy.coupon.exception.InvalidCouponPolicyRequestException;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -30,20 +29,20 @@ class CouponPolicyServiceTest {
     private CouponPolicyRepository couponPolicyRepository;
 
     private CouponPolicy couponPolicy;
-    private UpdateCouponPolicyDTO updateCouponPolicyDTO;
+    private CouponPolicyRequestDTO updateCouponPolicyDTO;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         couponPolicy = new CouponPolicy("Test Policy", 1000, "PERCENTAGE", 10, 100, "EVENT", ZonedDateTime.now());
-        updateCouponPolicyDTO = new UpdateCouponPolicyDTO("Updated Policy", 2000, "FIXED", 20, 150, "NEW_EVENT");
+        updateCouponPolicyDTO = new CouponPolicyRequestDTO("Updated Policy", 2000, "FIXED", 20, 150, "NEW_EVENT");
     }
 
     // 쿠폰 정책 생성
     @Test
     void createPolicyTest() {
         // CouponPolicy.of() 메서드를 사용해 DTO로부터 쿠폰 정책 객체를 생성
-        UpdateCouponPolicyDTO dto = new UpdateCouponPolicyDTO(
+        CouponPolicyRequestDTO dto = new CouponPolicyRequestDTO(
                 "Test Policy",       // couponPolicyName
                 1000,                // minPurchaseAmount
                 "PERCENTAGE",        // discountType

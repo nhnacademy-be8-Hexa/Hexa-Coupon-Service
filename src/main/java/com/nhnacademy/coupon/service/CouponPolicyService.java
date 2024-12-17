@@ -1,6 +1,6 @@
 package com.nhnacademy.coupon.service;
 
-import com.nhnacademy.coupon.entity.Dto.UpdateCouponPolicyDTO;
+import com.nhnacademy.coupon.entity.Dto.CouponPolicyRequestDTO;
 import com.nhnacademy.coupon.exception.CouponPolicyNotFoundException;
 import com.nhnacademy.coupon.exception.InvalidCouponPolicyRequestException;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class CouponPolicyService {
     private final CouponPolicyRepository couponPolicyRepository;
 
     // 쿠폰 정책 생성
-    public CouponPolicy createPolicy(UpdateCouponPolicyDTO couponPolicy) {
+    public CouponPolicy createPolicy(CouponPolicyRequestDTO couponPolicy) {
         if (couponPolicy == null) {
             throw new InvalidCouponPolicyRequestException("Invalid coupon policy data");
         }
@@ -30,7 +30,7 @@ public class CouponPolicyService {
 
     // 쿠폰 정책 수정
     @Transactional
-    public CouponPolicy updatePolicy(Long policyId, UpdateCouponPolicyDTO updatedPolicyDTO) {
+    public CouponPolicy updatePolicy(Long policyId, CouponPolicyRequestDTO updatedPolicyDTO) {
         // 기존 정책 가져오기
         CouponPolicy existingPolicy = couponPolicyRepository.findById(policyId)
                 .orElseThrow(() -> new CouponPolicyNotFoundException(policyId)); // CouponPolicyNotFoundException으로 변경

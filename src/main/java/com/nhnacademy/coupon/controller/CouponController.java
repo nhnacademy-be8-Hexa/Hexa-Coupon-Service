@@ -1,6 +1,6 @@
 package com.nhnacademy.coupon.controller;
 
-import com.nhnacademy.coupon.entity.Dto.CreatCouponDTO;
+import com.nhnacademy.coupon.entity.Dto.CouponRequestDTO;
 import com.nhnacademy.coupon.entity.Coupon;
 import com.nhnacademy.coupon.service.CouponService;
 import jakarta.validation.Valid;
@@ -21,7 +21,7 @@ public class CouponController {
     @PostMapping("/create")
     public ResponseEntity<List<Coupon>> createCoupons(
             @RequestParam("count") int count,
-            @RequestBody @Valid CreatCouponDTO couponDTO) {
+            @RequestBody @Valid CouponRequestDTO couponDTO) {
 
         if (count <= 0) {
             return ResponseEntity.badRequest().body(List.of()); // count가 0 이하일 경우 400 응답

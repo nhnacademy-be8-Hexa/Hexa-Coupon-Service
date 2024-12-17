@@ -1,6 +1,6 @@
 package com.nhnacademy.coupon.controller;
 
-import com.nhnacademy.coupon.entity.Dto.UpdateCouponPolicyDTO;
+import com.nhnacademy.coupon.entity.Dto.CouponPolicyRequestDTO;
 import com.nhnacademy.coupon.exception.CouponPolicyNotFoundException;
 import com.nhnacademy.coupon.exception.InvalidCouponPolicyRequestException;
 import jakarta.validation.Valid;
@@ -22,7 +22,7 @@ public class CouponPolicyController {
 
     // 쿠폰 정책 생성
     @PostMapping("/create")
-    public ResponseEntity<CouponPolicy> createPolicy(@RequestBody @Valid UpdateCouponPolicyDTO couponPolicy) {
+    public ResponseEntity<CouponPolicy> createPolicy(@RequestBody @Valid CouponPolicyRequestDTO couponPolicy) {
         try {
             CouponPolicy createdPolicy = couponPolicyService.createPolicy(couponPolicy);
             return ResponseEntity.ok(createdPolicy);
@@ -33,7 +33,7 @@ public class CouponPolicyController {
 
     // 쿠폰 정책 수정
     @PutMapping("/update/{policyId}")
-    public ResponseEntity<CouponPolicy> updatePolicy(@PathVariable Long policyId, @RequestBody @Valid UpdateCouponPolicyDTO updatedPolicy) {
+    public ResponseEntity<CouponPolicy> updatePolicy(@PathVariable Long policyId, @RequestBody @Valid CouponPolicyRequestDTO updatedPolicy) {
         try {
             CouponPolicy policy = couponPolicyService.updatePolicy(policyId, updatedPolicy);
             return ResponseEntity.ok(policy);

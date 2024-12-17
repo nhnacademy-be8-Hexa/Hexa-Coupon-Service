@@ -1,6 +1,5 @@
 package com.nhnacademy.coupon.entity;
 
-import com.nhnacademy.coupon.entity.Dto.UpdateCouponPolicyDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

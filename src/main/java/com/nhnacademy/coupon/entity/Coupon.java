@@ -1,6 +1,5 @@
 package com.nhnacademy.coupon.entity;
 
-import com.nhnacademy.coupon.entity.Dto.CreatCouponDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
