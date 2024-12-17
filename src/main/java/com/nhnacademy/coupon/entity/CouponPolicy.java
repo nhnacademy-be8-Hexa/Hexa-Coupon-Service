@@ -5,68 +5,70 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import java.time.ZonedDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 public class CouponPolicy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long couponPolicyId;
 
-    @NotNull
+    @NotBlank
+    @Length(max = 50)
     private String couponPolicyName;
 
     @NotNull
+    @PositiveOrZero
     private int minPurchaseAmount;
 
-    @NotNull
+    @NotBlank
+    @Length(max = 20)
     private String discountType;
 
     @NotNull
+    @PositiveOrZero
     private int discountValue;
 
+    @PositiveOrZero
     private int maxDiscountAmount;
 
     @NotNull
-    private boolean isDeleted = false;
+    private boolean isDeleted;
 
+    @Length(max = 20)
     private String eventType;
 
     @NotNull
     private ZonedDateTime createdAt;
 
-    public CouponPolicy() {
-        this.isDeleted = false; // 기본값을 'false'로 설정
-    }
-
-    @Builder
-    public CouponPolicy(String couponPolicyName, int minPurchaseAmount, String discountType, int discountValue,
-                        int maxDiscountAmount, String eventType, ZonedDateTime createdAt) {
-        this.couponPolicyName = couponPolicyName;
-        this.minPurchaseAmount = minPurchaseAmount;
-        this.discountType = discountType;
-        this.discountValue = discountValue;
-        this.maxDiscountAmount = maxDiscountAmount;
-        this.isDeleted = false;  // 비활성화 상태는 'false'로 두고, 비활성화는 별도로 처리
-        this.eventType = eventType;
-        this.createdAt = createdAt != null ? createdAt : ZonedDateTime.now();  // 기존 생성일 유지
-    }
-
     // 새로운 정책을 생성하는 메서드
-    public static CouponPolicy of(UpdateCouponPolicyDTO updatedPolicyDTO) {
+    public static CouponPolicy of(
+             String couponPolicyName,
+             int minPurchaseAmount,
+             String discountType,
+             int discountValue,
+             int maxDiscountAmount
+    ) {
         return CouponPolicy.builder()
-                .couponPolicyName(updatedPolicyDTO.couponPolicyName())  // 새로운 정책명
-                .minPurchaseAmount(updatedPolicyDTO.minPurchaseAmount()) // 새로운 최소 구매 금액
-                .discountType(updatedPolicyDTO.discountType())           // 새로운 할인 타입
-                .discountValue(updatedPolicyDTO.discountValue())         // 새로운 할인 값
-                .maxDiscountAmount(updatedPolicyDTO.maxDiscountAmount()) // 새로운 최대 할인 금액
-                .eventType(updatedPolicyDTO.eventType())                 // 새로운 이벤트 타입
-                .createdAt(ZonedDateTime.now())                           // 새로운 생성 시간
+                .couponPolicyName(couponPolicyName)  // 새로운 정책명
+                .minPurchaseAmount(minPurchaseAmount) // 새로운 최소 구매 금액
+                .discountType(discountType)           // 새로운 할인 타입
+                .discountValue(discountValue)         // 새로운 할인 값
+                .maxDiscountAmount(maxDiscountAmount) // 새로운 최대 할인 금액
+                .isDeleted(false)
+                .eventType(null)                        // 새로운 이벤트 타입
+                .createdAt(ZonedDateTime.now())        // 새로운 생성 시간
                 .build();
     }
 
