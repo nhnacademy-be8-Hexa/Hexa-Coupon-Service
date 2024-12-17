@@ -2,6 +2,8 @@ package com.nhnacademy.coupon.service;
 
 import com.nhnacademy.coupon.entity.Dto.UpdateCouponPolicyDTO;
 import com.nhnacademy.coupon.entity.CouponPolicy;
+import com.nhnacademy.coupon.exception.CouponPolicyNotFoundException;
+import com.nhnacademy.coupon.exception.InvalidCouponPolicyRequestException;
 import com.nhnacademy.coupon.repository.CouponPolicyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,6 +67,13 @@ class CouponPolicyServiceTest {
 
         // couponPolicyRepository.save() 메서드가 정확히 한 번 호출되었는지 확인
         verify(couponPolicyRepository, times(1)).save(any(CouponPolicy.class));
+    }
+
+    @Test
+    void testCreatePolicy_nullCouponPolicy() {
+        // Given / When / Then
+        assertThrows(InvalidCouponPolicyRequestException.class, () -> couponPolicyService.createPolicy(null));
+        verify(couponPolicyRepository, never()).save(any(CouponPolicy.class));
     }
 
     // 쿠폰 정책 수정
@@ -132,7 +141,7 @@ class CouponPolicyServiceTest {
     void updatePolicyNotFoundTest() {
         when(couponPolicyRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> couponPolicyService.updatePolicy(1L, updateCouponPolicyDTO));
+        assertThrows(CouponPolicyNotFoundException.class, () -> couponPolicyService.updatePolicy(1L, updateCouponPolicyDTO));
     }
 
     // 예외 처리: 쿠폰 정책 삭제 시 ID가 없는 경우
@@ -140,7 +149,7 @@ class CouponPolicyServiceTest {
     void deletePolicyNotFoundTest() {
         when(couponPolicyRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> couponPolicyService.deletePolicy(1L));
+        assertThrows(CouponPolicyNotFoundException.class, () -> couponPolicyService.deletePolicy(1L));
     }
 
     // 쿠폰 정책 비활성화 테스트

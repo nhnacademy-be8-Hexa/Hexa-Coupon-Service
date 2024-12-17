@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.coupon.entity.Coupon;
 import com.nhnacademy.coupon.entity.CouponPolicy;
 import com.nhnacademy.coupon.entity.Dto.CreatCouponDTO;
+import com.nhnacademy.coupon.exception.CouponNotFoundException;
 import com.nhnacademy.coupon.service.CouponService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,21 +63,62 @@ public class CouponControllerTest {
         coupon = Coupon.of(couponDTO, couponPolicy);
     }
 
-    // 쿠폰 생성 테스트
     @Test
-    public void testCreateCoupon() throws Exception {
-        when(couponService.createCoupon(any(CreatCouponDTO.class)))
-                .thenReturn(coupon);
+    void shouldReturnBadRequestWhenCountIsZeroOrNegative() throws Exception {
+        CreatCouponDTO couponDTO = new CreatCouponDTO(
+                1L,
+                "Summer Discount",
+                "ALL",
+                0L,
+                ZonedDateTime.now().plusDays(30) // 유효한 미래 날짜
+        );
 
-        mockMvc.perform(post("/api/coupons/create")
+        // count가 0일 때
+        mockMvc.perform(post("/create")
+                        .param("count", "0")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{" + "\"couponPolicyId\": 1," + "\"couponName\": \"Summer Discount\"," + "\"couponTarget\": \"ALL\"," + "\"couponTargetId\": 0," + "\"couponDeadline\": \"" + ZonedDateTime.now().plusDays(30).toString() + "\"" + "}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.couponName", is("Summer Discount")))
-                .andExpect(jsonPath("$.couponTarget", is("ALL")))
-                .andExpect(jsonPath("$.couponTargetId", is(0)));
+                        .content(new ObjectMapper().writeValueAsString(couponDTO))
+                )
+                .andExpect(status().isBadRequest());
+
+        // count가 음수일 때
+        mockMvc.perform(post("/create")
+                        .param("count", "-5")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(couponDTO))
+                )
+                .andExpect(status().isBadRequest());
     }
 
+    // 쿠폰 생성 테스트
+    @Test
+    void shouldCreateCouponsSuccessfullyWhenCountIsValid() throws Exception {
+        CreatCouponDTO couponDTO = new CreatCouponDTO(
+                1L,
+                "Summer Discount",
+                "ALL",
+                0L,
+                ZonedDateTime.now().plusDays(30) // 유효한 미래 날짜
+        );
+
+        // Mocking couponService.createCoupon() 메서드
+        List<Coupon> mockCoupons = List.of(
+                Coupon.of(couponDTO, new CouponPolicy()),
+                Coupon.of(couponDTO, new CouponPolicy()),
+                Coupon.of(couponDTO, new CouponPolicy())
+        );
+        when(couponService.createCoupon(eq(couponDTO), eq(3))).thenReturn(mockCoupons);
+
+        mockMvc.perform(post("/create")
+                        .param("count", "3")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(couponDTO))
+                )
+                .andExpect(status().isOk())  // OK 응답 확인
+                .andExpect(jsonPath("$[0].couponName", is("Summer Discount")))  // 첫 번째 쿠폰 이름 확인
+                .andExpect(jsonPath("$[1].couponName", is("Summer Discount")))  // 두 번째 쿠폰 이름 확인
+                .andExpect(jsonPath("$[2].couponName", is("Summer Discount"))); // 세 번째 쿠폰 이름 확인
+    }
 
     // 쿠폰 ID로 조회 테스트
     @Test
@@ -88,6 +130,16 @@ public class CouponControllerTest {
                 .andExpect(jsonPath("$.couponName", is("Summer Discount")))
                 .andExpect(jsonPath("$.couponTarget", is("ALL")))
                 .andExpect(jsonPath("$.couponTargetId", is(0)));
+    }
+
+    // 쿠폰 ID로 조회 (예외처리 테스트)
+    @Test
+    public void testGetCouponById_NotFound() throws Exception {
+        when(couponService.getCouponById(1L)).thenThrow(new CouponNotFoundException(1l));
+
+        mockMvc.perform(get("/api/coupons/{couponId}", 1L))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Coupon with ID 1 not found"));
     }
 
     // 모든 쿠폰 조회 테스트

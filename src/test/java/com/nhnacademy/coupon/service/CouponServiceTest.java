@@ -3,6 +3,8 @@ package com.nhnacademy.coupon.service;
 import com.nhnacademy.coupon.entity.Coupon;
 import com.nhnacademy.coupon.entity.CouponPolicy;
 import com.nhnacademy.coupon.entity.Dto.CreatCouponDTO;
+import com.nhnacademy.coupon.exception.CouponNotFoundException;
+import com.nhnacademy.coupon.exception.InvalidCouponRequestException;
 import com.nhnacademy.coupon.repository.CouponPolicyRepository;
 import com.nhnacademy.coupon.repository.CouponRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -66,44 +69,81 @@ class CouponServiceTest {
     void testCreateCoupon_success() {
         when(couponPolicyRepository.findById(couponDTO.couponPolicyId()))
                 .thenReturn(Optional.of(couponPolicy));
-        when(couponRepository.save(any(Coupon.class)))
-                .thenReturn(coupon);
 
-        Coupon createdCoupon = couponService.createCoupon(couponDTO);
+        int count = 3;
+
+        when(couponRepository.saveAll(anyList()))
+                .thenReturn(List.of(
+                        Coupon.of(couponDTO, couponPolicy),
+                        Coupon.of(couponDTO, couponPolicy),
+                        Coupon.of(couponDTO, couponPolicy)
+                ));
+
+        List<Coupon> createdCoupon = couponService.createCoupon(couponDTO, count);
 
         assertNotNull(createdCoupon);
-        assertEquals("Summer Discount", createdCoupon.getCouponName());
-        assertEquals("ALL", createdCoupon.getCouponTarget());
+        assertEquals(count, createdCoupon.size());
+        assertEquals("Summer Discount", createdCoupon.get(0).getCouponName());
+        assertEquals("ALL", createdCoupon.get(0).getCouponTarget());
+
         verify(couponPolicyRepository, times(1)).findById(couponDTO.couponPolicyId());
-        verify(couponRepository, times(1)).save(any(Coupon.class));
+        verify(couponRepository, times(1)).saveAll(anyList());
     }
 
     @Test
-    void testCreateCoupon_invalidPolicy() {
+    void testCreateMultipleCoupons_invalidPolicy() {
         when(couponPolicyRepository.findById(couponDTO.couponPolicyId()))
                 .thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> couponService.createCoupon(couponDTO));
+        int count = 3;
+        assertThrows(InvalidCouponRequestException.class, () -> couponService.createCoupon(couponDTO, count));
         verify(couponPolicyRepository, times(1)).findById(couponDTO.couponPolicyId());
         verify(couponRepository, never()).save(any(Coupon.class));
     }
 
     @Test
-    void testCreateCoupon_invalidDeadline() {
+    void shouldThrowExceptionWhenCountIsZeroOrNegative() {
+        CreatCouponDTO validDTO = new CreatCouponDTO(
+                1L,
+                "Summer Discount",
+                "ALL",
+                0L,
+                ZonedDateTime.now().plusDays(1)
+        );
+
+        assertThrows(
+                InvalidCouponRequestException.class,
+                () -> couponService.createCoupon(validDTO, 0),
+                "쿠폰 개수는 1개 이상이어야 합니다."
+        );
+        assertThrows(
+                InvalidCouponRequestException.class,
+                () -> couponService.createCoupon(validDTO, -5),
+                "쿠폰 개수는 1개 이상이어야 합니다."
+        );
+    }
+
+    @Test
+    void testCreateMultipleCoupons_invalidDeadline() {
         CreatCouponDTO invalidDTO = new CreatCouponDTO(
-                1L,                              // couponPolicyId
-                "Summer Discount",               // couponName
-                "ALL",                           // couponTarget
-                0L,                              // couponTargetId
-                ZonedDateTime.now().minusDays(1) // Past deadline
+                1L,
+                "Summer Discount",
+                "ALL",
+                0L,
+                ZonedDateTime.now().minusDays(1)
         );
 
         when(couponPolicyRepository.findById(invalidDTO.couponPolicyId()))
                 .thenReturn(Optional.of(couponPolicy));
 
-        assertThrows(IllegalArgumentException.class, () -> couponService.createCoupon(invalidDTO));
+        int count = 3;
+
+        assertThrows(InvalidCouponRequestException.class, () -> {
+            couponService.createCoupon(invalidDTO, count);
+        });
+
         verify(couponPolicyRepository, times(1)).findById(invalidDTO.couponPolicyId());
-        verify(couponRepository, never()).save(any(Coupon.class));
+        verify(couponRepository, never()).saveAll(anyList());
     }
 
     @Test
@@ -121,7 +161,7 @@ class CouponServiceTest {
     void testGetCouponById_notFound() {
         when(couponRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> couponService.getCouponById(1L));
+        assertThrows(CouponNotFoundException.class, () -> couponService.getCouponById(1L));
         verify(couponRepository, times(1)).findById(1L);
     }
 
@@ -139,8 +179,8 @@ class CouponServiceTest {
 
     @Test
     void testGetCouponsByIds_invalidInput() {
-        assertThrows(IllegalArgumentException.class, () -> couponService.getCouponsByIds(null));
-        assertThrows(IllegalArgumentException.class, () -> couponService.getCouponsByIds(List.of()));
+        assertThrows(InvalidCouponRequestException.class, () -> couponService.getCouponsByIds(null));
+        assertThrows(InvalidCouponRequestException.class, () -> couponService.getCouponsByIds(List.of()));
         verify(couponRepository, never()).findAllById(any());
     }
 
@@ -189,4 +229,75 @@ class CouponServiceTest {
         verify(couponRepository, times(1)).findById(1L);
         verify(couponRepository, times(1)).save(coupon);
     }
+
+    @Test
+    void testGetUsedCoupons_success() {
+        Coupon usedCoupon = Coupon.of(couponDTO, couponPolicy);
+        usedCoupon.markAsUsed(ZonedDateTime.now());
+        when(couponRepository.findUsedCoupons()).thenReturn(Arrays.asList(usedCoupon));
+
+        List<Coupon> usedCoupons = couponService.getUsedCoupons();
+
+        assertNotNull(usedCoupons);
+        assertFalse(usedCoupons.isEmpty());
+        assertEquals(1, usedCoupons.size());
+        verify(couponRepository, times(1)).findUsedCoupons();
+    }
+
+    @Test
+    void testGetUsedCoupons_empty() {
+
+        when(couponRepository.findUsedCoupons()).thenReturn(new ArrayList<>());
+
+        List<Coupon> usedCoupons = couponService.getUsedCoupons();
+
+        assertNotNull(usedCoupons);
+        assertTrue(usedCoupons.isEmpty());
+        verify(couponRepository, times(1)).findUsedCoupons();
+    }
+
+    @Test
+    void testGetUsedCouponsByIds_success() {
+
+        Coupon usedCoupon = Coupon.of(couponDTO, couponPolicy);
+        usedCoupon.markAsUsed(ZonedDateTime.now());
+        List<Long> couponIds = Arrays.asList(1L, 2L);
+
+        when(couponRepository.findUsedCouponsByIds(couponIds)).thenReturn(Arrays.asList(usedCoupon));
+
+        List<Coupon> usedCoupons = couponService.getUsedCouponsByIds(couponIds);
+
+        assertNotNull(usedCoupons);
+        assertFalse(usedCoupons.isEmpty());
+        assertEquals(1, usedCoupons.size());
+        verify(couponRepository, times(1)).findUsedCouponsByIds(couponIds);
+    }
+
+    @Test
+    void testGetUsedCouponsByIds_invalidInput_null() {
+
+        assertThrows(InvalidCouponRequestException.class, () -> couponService.getUsedCouponsByIds(null));
+        verify(couponRepository, never()).findUsedCouponsByIds(any());
+    }
+
+    @Test
+    void testGetUsedCouponsByIds_invalidInput_empty() {
+        assertThrows(InvalidCouponRequestException.class, () -> couponService.getUsedCouponsByIds(new ArrayList<>()));
+        verify(couponRepository, never()).findUsedCouponsByIds(any());
+    }
+
+    @Test
+    void testGetUsedCouponsByIds_noUsedCoupons() {
+
+        List<Long> couponIds = Arrays.asList(1L, 2L);
+        when(couponRepository.findUsedCouponsByIds(couponIds)).thenReturn(new ArrayList<>());
+
+        List<Coupon> usedCoupons = couponService.getUsedCouponsByIds(couponIds);
+
+        assertNotNull(usedCoupons);
+        assertTrue(usedCoupons.isEmpty());
+        verify(couponRepository, times(1)).findUsedCouponsByIds(couponIds);
+    }
+
+
 }

@@ -1,12 +1,13 @@
 package com.nhnacademy.coupon.service;
 
 import com.nhnacademy.coupon.entity.Dto.UpdateCouponPolicyDTO;
+import com.nhnacademy.coupon.exception.CouponPolicyNotFoundException;
+import com.nhnacademy.coupon.exception.InvalidCouponPolicyRequestException;
 import lombok.RequiredArgsConstructor;
 import com.nhnacademy.coupon.entity.CouponPolicy;
 import com.nhnacademy.coupon.repository.CouponPolicyRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,8 +17,11 @@ public class CouponPolicyService {
 
     private final CouponPolicyRepository couponPolicyRepository;
 
-    //쿠폰 정책 생성
-    public CouponPolicy createPolicy(UpdateCouponPolicyDTO couponPolicy){
+    // 쿠폰 정책 생성
+    public CouponPolicy createPolicy(UpdateCouponPolicyDTO couponPolicy) {
+        if (couponPolicy == null) {
+            throw new InvalidCouponPolicyRequestException("Invalid coupon policy data");
+        }
 
         CouponPolicy newPolicy = CouponPolicy.of(couponPolicy);
 
@@ -29,7 +33,7 @@ public class CouponPolicyService {
     public CouponPolicy updatePolicy(Long policyId, UpdateCouponPolicyDTO updatedPolicyDTO) {
         // 기존 정책 가져오기
         CouponPolicy existingPolicy = couponPolicyRepository.findById(policyId)
-                .orElseThrow(() -> new IllegalArgumentException("Coupon policy id not found"));
+                .orElseThrow(() -> new CouponPolicyNotFoundException(policyId)); // CouponPolicyNotFoundException으로 변경
 
         // 기존 정책을 비활성화
         CouponPolicy deletedPolicy = existingPolicy.markAsDeleted();
@@ -42,12 +46,11 @@ public class CouponPolicyService {
         return couponPolicyRepository.save(newPolicy);
     }
 
-
     // 쿠폰 정책 삭제
     @Transactional
     public void deletePolicy(Long policyId) {
         CouponPolicy policy = couponPolicyRepository.findById(policyId)
-                .orElseThrow(() -> new IllegalArgumentException("Coupon policy id not found"));
+                .orElseThrow(() -> new CouponPolicyNotFoundException(policyId)); // CouponPolicyNotFoundException으로 변경
 
         policy.markAsDeleted();
         couponPolicyRepository.save(policy);
@@ -65,7 +68,7 @@ public class CouponPolicyService {
     public CouponPolicy getPolicyById(Long policyId) {
         return couponPolicyRepository.findById(policyId)
                 .filter(policy -> !policy.isDeleted())
-                .orElseThrow(() -> new IllegalArgumentException("Coupon policy id not found"));
+                .orElseThrow(() -> new CouponPolicyNotFoundException(policyId)); // CouponPolicyNotFoundException으로 변경
     }
 
 }

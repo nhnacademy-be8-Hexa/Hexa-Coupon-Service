@@ -1,5 +1,5 @@
 ### 쿠폰 생성 (POST /api/coupons/create)
-POST http://localhost:8083/api/coupons/create
+POST http://localhost:8083/api/coupons/create?count=3
 Content-Type: application/json
 
 {
@@ -10,9 +10,16 @@ Content-Type: application/json
   "couponDeadline": "2025-12-31T23:59:59Z"
 }
 
-
 ### 쿠폰 조회 (GET /api/coupons/{couponId})
 GET http://localhost:8083/api/coupons/1
+Accept: application/json
+
+### 전체 사용된 쿠폰 조회
+GET http://localhost:8083/api/coupons/used
+Accept: application/json
+
+### 쿠폰 ID 리스트를 통한 사용된 쿠폰 조회 성공
+GET http://localhost:8083/api/coupons/used/by-ids?couponIds=1&couponIds=2&couponIds=3
 Accept: application/json
 
 ### 모든 쿠폰 조회 (GET /api/coupons/all)
