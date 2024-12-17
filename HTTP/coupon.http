@@ -1,0 +1,39 @@
+### 쿠폰 생성 (POST /api/coupons/create)
+POST http://localhost:8083/api/coupons/create?count=3
+Content-Type: application/json
+
+{
+  "couponPolicyId": 1,
+  "couponName": "Winter Promo",
+  "couponTarget": "Customer",
+  "couponTargetId": 12345,
+  "couponDeadline": "2025-12-31T23:59:59Z"
+}
+
+### 쿠폰 조회 (GET /api/coupons/{couponId})
+GET http://localhost:8083/api/coupons/1
+Accept: application/json
+
+### 전체 사용된 쿠폰 조회
+GET http://localhost:8083/api/coupons/used
+Accept: application/json
+
+### 쿠폰 ID 리스트를 통한 사용된 쿠폰 조회 성공
+GET http://localhost:8083/api/coupons/used/by-ids?couponIds=1&couponIds=2&couponIds=3
+Accept: application/json
+
+### 모든 쿠폰 조회 (GET /api/coupons/all)
+GET http://localhost:8083/api/coupons/all
+Accept: application/json
+
+### 쿠폰 ID 리스트로 쿠폰 조회 (GET /api/coupons/list)
+GET http://localhost:8083/api/coupons/list?couponIds=1,2,3
+Accept: application/json
+
+### 쿠폰 사용 (POST /api/coupons/use/{couponId})
+POST http://localhost:8083/api/coupons/use/1
+Accept: application/json
+
+### 쿠폰 비활성화 (POST /api/coupons/deactivate/{couponId})
+POST http://localhost:8083/api/coupons/deactivate/1
+Accept: application/json

@@ -1,4 +1,4 @@
-package main.coupon.controller;
+package com.nhnacademy.coupon.controller;
 
 /*
  * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -14,7 +14,7 @@ package main.coupon.controller;
 
 import com.netflix.appinfo.ApplicationInfoManager;
 import com.netflix.appinfo.InstanceInfo;
-import main.coupon.actuator.ApplicationStatus;
+import com.nhnacademy.coupon.actuator.ApplicationStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,4 +1,4 @@
-package main.coupon.index;
+package com.nhnacademy.coupon.index;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

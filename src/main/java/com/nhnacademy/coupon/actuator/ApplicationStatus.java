@@ -1,4 +1,4 @@
-package main.coupon.actuator;
+package com.nhnacademy.coupon.actuator;
 
 import org.springframework.stereotype.Component;
 
