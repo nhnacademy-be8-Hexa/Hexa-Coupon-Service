@@ -2,6 +2,8 @@ package com.nhnacademy.coupon.controller;
 
 import com.nhnacademy.coupon.entity.CouponPolicy;
 import com.nhnacademy.coupon.entity.Dto.UpdateCouponPolicyDTO;
+import com.nhnacademy.coupon.exception.CouponPolicyNotFoundException;
+import com.nhnacademy.coupon.exception.InvalidCouponPolicyRequestException;
 import com.nhnacademy.coupon.service.CouponPolicyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -133,4 +135,80 @@ public class CouponPolicyControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("Coupon policy deleted successfully"));
     }
+    @Test
+    void createPolicy_ShouldReturnBadRequest_WhenInvalidCouponPolicy() throws Exception {
+        // Invalid DTO 예시 (필수 필드 누락 또는 잘못된 값)
+        String invalidContent = "{\"couponPolicyName\": \"\", \"minPurchaseAmount\": -1000, \"discountType\": \"INVALID\", \"discountValue\": 0, \"maxDiscountAmount\": 0, \"eventType\": \"\"}";
+
+        // InvalidCouponPolicyRequestException 발생하도록 설정
+        when(couponPolicyService.createPolicy(any(UpdateCouponPolicyDTO.class)))
+                .thenThrow(new InvalidCouponPolicyRequestException("Invalid coupon policy data"));
+
+        // POST 요청을 통해 쿠폰 정책 생성
+        mockMvc.perform(post("/api/policies/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidContent))
+                .andExpect(status().isBadRequest())  // HTTP 400 응답
+                .andExpect(content().string(""));  // 빈 응답 내용
+    }
+
+    @Test
+    void updatePolicy_ShouldReturnNotFound_WhenCouponPolicyNotFound() throws Exception {
+        // UpdateCouponPolicyDTO 객체 생성
+        UpdateCouponPolicyDTO updatedDTO = new UpdateCouponPolicyDTO(
+                "Updated Winter Discount", 15000, "PERCENTAGE", 15, 6000, "Holiday Sale"
+        );
+
+        // CouponPolicyNotFoundException 발생하도록 설정
+        when(couponPolicyService.updatePolicy(eq(1L), any(UpdateCouponPolicyDTO.class)))
+                .thenThrow(new CouponPolicyNotFoundException(1L));
+
+        // PUT 요청을 통해 쿠폰 정책 업데이트
+        mockMvc.perform(put("/api/policies/update/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"couponPolicyName\": \"Updated Winter Discount\", \"minPurchaseAmount\": 15000, \"discountType\": \"PERCENTAGE\", \"discountValue\": 15, \"maxDiscountAmount\": 6000, \"eventType\": \"Holiday Sale\"}"))
+                .andExpect(status().isNotFound())  // HTTP 404 응답
+                .andExpect(content().string(""));  // 빈 응답 내용
+    }
+
+    @Test
+    void getPolicyById_ShouldReturnNotFound_WhenCouponPolicyNotFound() throws Exception {
+        // CouponPolicyNotFoundException 발생하도록 설정
+        when(couponPolicyService.getPolicyById(1L)).thenThrow(new CouponPolicyNotFoundException(1L));
+
+        // GET 요청을 통해 쿠폰 정책 조회
+        mockMvc.perform(get("/api/policies/1"))
+                .andExpect(status().isNotFound())  // HTTP 404 응답
+                .andExpect(content().string(""));  // 빈 응답 내용
+    }
+
+    @Test
+    void deletePolicy_ShouldReturnNotFound_WhenCouponPolicyNotFound() throws Exception {
+        // CouponPolicyNotFoundException 발생하도록 설정
+        doThrow(new CouponPolicyNotFoundException(1L)).when(couponPolicyService).deletePolicy(1L);
+
+        // POST 요청을 통해 쿠폰 정책 삭제
+        mockMvc.perform(post("/api/policies/delete/1"))
+                .andExpect(status().isNotFound())  // HTTP 404 응답
+                .andExpect(content().string("Coupon policy not found"));
+    }
+
+    @Test
+    void updatePolicy_ShouldReturnBadRequest_WhenInvalidCouponPolicy() throws Exception {
+        // Invalid DTO 예시 (잘못된 데이터)
+        String invalidContent = "{\"couponPolicyName\": \"\", \"minPurchaseAmount\": -1000, \"discountType\": \"INVALID\", \"discountValue\": 0, \"maxDiscountAmount\": 0, \"eventType\": \"\"}";
+
+        // InvalidCouponPolicyRequestException 발생하도록 설정
+        when(couponPolicyService.updatePolicy(eq(1L), any(UpdateCouponPolicyDTO.class)))
+                .thenThrow(new InvalidCouponPolicyRequestException("Invalid coupon policy data"));
+
+        // PUT 요청을 통해 쿠폰 정책 수정 (잘못된 데이터)
+        mockMvc.perform(put("/api/policies/update/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidContent))
+                .andExpect(status().isBadRequest())  // HTTP 400 응답
+                .andExpect(content().string(""));  // 빈 응답 내용
+    }
+
+
 }
