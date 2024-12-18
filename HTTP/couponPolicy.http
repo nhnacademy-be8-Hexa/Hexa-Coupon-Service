@@ -23,8 +23,11 @@ Content-Type: application/json
   "eventType": "welcome"
 }
 
-### 모든 쿠폰 정책 조회
+### 모든 쿠폰 정책 조회 삭제 안된
 GET http://localhost:8083/api/policies
+
+### 모든 쿠폰 정책 조회 삭제 된
+GET http://localhost:8083/api/policies?deleted=true
 
 ### 특정 쿠폰 정책 조회
 GET http://localhost:8083/api/policies/1
