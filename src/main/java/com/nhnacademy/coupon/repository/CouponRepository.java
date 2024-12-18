@@ -1,19 +1,19 @@
 package com.nhnacademy.coupon.repository;
 
 import com.nhnacademy.coupon.entity.Coupon;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
-    @Query("SELECT c FROM Coupon c WHERE c.couponUsedAt IS NOT NULL")
-    List<Coupon> findUsedCoupons();
+    List<Coupon> findByCouponIsActive(@NotNull boolean couponIsActive);
 
-    @Query("SELECT c FROM Coupon c WHERE c.couponId IN :ids AND c.couponUsedAt IS NOT NULL")
-    List<Coupon> findUsedCouponsByIds(@Param("ids") List<Long> ids);
+    List<Coupon> findByCouponIdInAndCouponIsActive(List<Long> couponIds, @NotNull boolean couponIsActive);
 
 }

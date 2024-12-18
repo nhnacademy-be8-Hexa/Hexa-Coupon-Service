@@ -60,12 +60,19 @@ public class Coupon {
                 .build();
     }
 
-    public void markAsUsed(ZonedDateTime usedAt) {
+    public void markAsUsed() {
         if (!this.couponIsActive) {
             throw new IllegalStateException("Coupon has already been used");
         }
         this.couponIsActive = false;
-        this.couponUsedAt = usedAt;
+        this.couponUsedAt = ZonedDateTime.now();
+    }
+
+    public void deActivate() {
+        if (!this.couponIsActive) {
+            throw new IllegalStateException("Coupon has already deleted");
+        }
+        this.couponIsActive = false;
     }
 
 }

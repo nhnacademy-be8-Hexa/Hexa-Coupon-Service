@@ -9,13 +9,19 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 public class GlobalExceptionHandler {
 
     // CouponNotFoundException 처리
-    @ExceptionHandler(CouponNotFoundException.class)
+    @ExceptionHandler({
+            CouponNotFoundException.class,
+            CouponPolicyNotFoundException.class
+    })
     public ResponseEntity<String> handleCouponNotFoundException(CouponNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
     // InvalidCouponRequestException 처리
-    @ExceptionHandler(InvalidCouponRequestException.class)
+    @ExceptionHandler({
+            InvalidCouponRequestException.class,
+            InvalidCouponPolicyRequestException.class
+    })
     public ResponseEntity<String> handleInvalidCouponRequestException(InvalidCouponRequestException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }

@@ -24,20 +24,15 @@ public class CouponPolicyController {
     // 모든 쿠폰 정책 조회
     @GetMapping
     public ResponseEntity<List<CouponPolicy>> getAllPolicies(
-            @RequestParam(name = "deleted", required = false) String deleted
+            @RequestParam(name = "deleted", required = false, defaultValue = "false") Boolean deleted
     ) {
-        if(deleted == null || deleted.equals("false")) {
-            // 삭제되지 않은 것들을 조회
-            List<CouponPolicy> policies = couponPolicyService.getAllPolicies(false);
-            return ResponseEntity.ok(policies);
-        }
-        List<CouponPolicy> policies = couponPolicyService.getAllPolicies(true);
+        List<CouponPolicy> policies = couponPolicyService.getAllPolicies(deleted);
         return ResponseEntity.ok(policies);
     }
 
     // 특정 쿠폰 정책 조회
     @GetMapping("/{policyId}")
-    public ResponseEntity<CouponPolicy> getPolicyById(@PathVariable Long policyId) {
+    public ResponseEntity<CouponPolicy> getPolicyById(@PathVariable(name = "policyId") Long policyId) {
         CouponPolicy policy = couponPolicyService.getPolicyById(policyId);
         return ResponseEntity.ok(policy);
     }
@@ -51,7 +46,7 @@ public class CouponPolicyController {
 
     // 쿠폰 정책 수정
     @PatchMapping("/{policyId}")
-    public ResponseEntity<CouponPolicy> updatePolicy(@PathVariable Long policyId, @RequestBody @Valid CouponPolicyRequestDTO updatedPolicy) {
+    public ResponseEntity<CouponPolicy> updatePolicy(@PathVariable(name = "policyId") Long policyId, @RequestBody @Valid CouponPolicyRequestDTO updatedPolicy) {
         CouponPolicy policy = couponPolicyService.updatePolicy(policyId, updatedPolicy);
         return ResponseEntity.ok(policy);
 
@@ -59,7 +54,7 @@ public class CouponPolicyController {
 
     // 쿠폰 정책 삭제
     @DeleteMapping("/{policyId}")
-    public ResponseEntity<String> deletePolicy(@PathVariable Long policyId) {
+    public ResponseEntity<String> deletePolicy(@PathVariable(name = "policyId") Long policyId) {
         couponPolicyService.deletePolicy(policyId);
         return ResponseEntity.ok("Coupon policy deleted successfully");
     }
