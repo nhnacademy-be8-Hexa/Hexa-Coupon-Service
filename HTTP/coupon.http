@@ -2,8 +2,6 @@
 GET http://localhost:8083/api/coupons/1
 Accept: application/json
 
-###
-
 ### 2. 모든 쿠폰 조회 (active 상태 필터링)
 ### 2-1. 특정 couponIds 리스트로 조회
 GET http://localhost:8083/api/coupons
