@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import com.nhnacademy.coupon.entity.CouponPolicy;
 import com.nhnacademy.coupon.service.CouponPolicyService;
+import org.hibernate.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,56 +21,47 @@ public class CouponPolicyController {
 
     private final CouponPolicyService couponPolicyService;
 
-    // 쿠폰 정책 생성
-    @PostMapping("/create")
-    public ResponseEntity<CouponPolicy> createPolicy(@RequestBody @Valid CouponPolicyRequestDTO couponPolicy) {
-        try {
-            CouponPolicy createdPolicy = couponPolicyService.createPolicy(couponPolicy);
-            return ResponseEntity.ok(createdPolicy);
-        } catch (InvalidCouponPolicyRequestException ex) {
-            return ResponseEntity.badRequest().body(null);  // 400 Bad Request
-        }
-    }
-
-    // 쿠폰 정책 수정
-    @PutMapping("/update/{policyId}")
-    public ResponseEntity<CouponPolicy> updatePolicy(@PathVariable Long policyId, @RequestBody @Valid CouponPolicyRequestDTO updatedPolicy) {
-        try {
-            CouponPolicy policy = couponPolicyService.updatePolicy(policyId, updatedPolicy);
-            return ResponseEntity.ok(policy);
-        } catch (CouponPolicyNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);  // 404 Not Found
-        } catch (InvalidCouponPolicyRequestException ex) {
-            return ResponseEntity.badRequest().body(null);  // 400 Bad Request
-        }
-    }
-
-    // 쿠폰 정책 삭제
-    @PostMapping("/delete/{policyId}")
-    public ResponseEntity<String> deletePolicy(@PathVariable Long policyId) {
-        try {
-            couponPolicyService.deletePolicy(policyId);
-            return ResponseEntity.ok("Coupon policy deleted successfully");
-        } catch (CouponPolicyNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Coupon policy not found");
-        }
-    }
-
     // 모든 쿠폰 정책 조회
-    @GetMapping("/all")
-    public ResponseEntity<List<CouponPolicy>> getAllPolicies() {
-        List<CouponPolicy> policies = couponPolicyService.getAllPolicies();
+    @GetMapping
+    public ResponseEntity<List<CouponPolicy>> getAllPolicies(
+            @RequestParam(name = "deleted", required = false) String deleted
+    ) {
+        if(deleted == null || deleted.equals("false")) {
+            // 삭제되지 않은 것들을 조회
+            List<CouponPolicy> policies = couponPolicyService.getAllPolicies(false);
+            return ResponseEntity.ok(policies);
+        }
+        List<CouponPolicy> policies = couponPolicyService.getAllPolicies(true);
         return ResponseEntity.ok(policies);
     }
 
     // 특정 쿠폰 정책 조회
     @GetMapping("/{policyId}")
     public ResponseEntity<CouponPolicy> getPolicyById(@PathVariable Long policyId) {
-        try {
-            CouponPolicy policy = couponPolicyService.getPolicyById(policyId);
-            return ResponseEntity.ok(policy);
-        } catch (CouponPolicyNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);  // 404 Not Found
-        }
+        CouponPolicy policy = couponPolicyService.getPolicyById(policyId);
+        return ResponseEntity.ok(policy);
     }
+
+    // 쿠폰 정책 생성
+    @PostMapping
+    public ResponseEntity<CouponPolicy> createPolicy(@RequestBody @Valid CouponPolicyRequestDTO couponPolicy) {
+        CouponPolicy createdPolicy = couponPolicyService.createPolicy(couponPolicy);
+        return ResponseEntity.ok(createdPolicy);
+    }
+
+    // 쿠폰 정책 수정
+    @PatchMapping("/{policyId}")
+    public ResponseEntity<CouponPolicy> updatePolicy(@PathVariable Long policyId, @RequestBody @Valid CouponPolicyRequestDTO updatedPolicy) {
+        CouponPolicy policy = couponPolicyService.updatePolicy(policyId, updatedPolicy);
+        return ResponseEntity.ok(policy);
+
+    }
+
+    // 쿠폰 정책 삭제
+    @DeleteMapping("/{policyId}")
+    public ResponseEntity<String> deletePolicy(@PathVariable Long policyId) {
+        couponPolicyService.deletePolicy(policyId);
+        return ResponseEntity.ok("Coupon policy deleted successfully");
+    }
+
 }

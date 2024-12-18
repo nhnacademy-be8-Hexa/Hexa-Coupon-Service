@@ -13,17 +13,25 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CouponPolicyService {
 
     private final CouponPolicyRepository couponPolicyRepository;
 
     // 쿠폰 정책 생성
-    public CouponPolicy createPolicy(CouponPolicyRequestDTO couponPolicy) {
-        if (couponPolicy == null) {
+    @Transactional
+    public CouponPolicy createPolicy(CouponPolicyRequestDTO couponPolicyDTO) {
+        if (couponPolicyDTO == null) {
             throw new InvalidCouponPolicyRequestException("Invalid coupon policy data");
         }
 
-        CouponPolicy newPolicy = CouponPolicy.of(couponPolicy);
+        CouponPolicy newPolicy = CouponPolicy.of(
+                couponPolicyDTO.couponPolicyName(),
+                couponPolicyDTO.minPurchaseAmount(),
+                couponPolicyDTO.discountType(),
+                couponPolicyDTO.discountValue(),
+                couponPolicyDTO.maxDiscountAmount()
+        );
 
         return couponPolicyRepository.save(newPolicy);
     }
@@ -37,10 +45,15 @@ public class CouponPolicyService {
 
         // 기존 정책을 비활성화
         CouponPolicy deletedPolicy = existingPolicy.markAsDeleted();
-        couponPolicyRepository.save(deletedPolicy);  // 기존 정책을 비활성화하고 저장
 
         // 새로운 정책 생성
-        CouponPolicy newPolicy = CouponPolicy.of(updatedPolicyDTO);
+        CouponPolicy newPolicy = CouponPolicy.of(
+                updatedPolicyDTO.couponPolicyName(),
+                updatedPolicyDTO.minPurchaseAmount(),
+                updatedPolicyDTO.discountType(),
+                updatedPolicyDTO.discountValue(),
+                updatedPolicyDTO.maxDiscountAmount()
+        );
 
         // 새 정책 저장 및 반환
         return couponPolicyRepository.save(newPolicy);
@@ -53,21 +66,17 @@ public class CouponPolicyService {
                 .orElseThrow(() -> new CouponPolicyNotFoundException(policyId)); // CouponPolicyNotFoundException으로 변경
 
         policy.markAsDeleted();
-        couponPolicyRepository.save(policy);
     }
 
     // 쿠폰 정책 조회
-    public List<CouponPolicy> getAllPolicies() {
-        return couponPolicyRepository.findAll()
-                .stream()
-                .filter(policy -> !policy.isDeleted())
-                .collect(Collectors.toList()); // 삭제되지 않은 것부터 조회
+    public List<CouponPolicy> getAllPolicies(boolean deleted) {
+        return couponPolicyRepository.findByDeleted(deleted);
     }
+
 
     // 특정 정책만 조회 아이디로 정책 찾기
     public CouponPolicy getPolicyById(Long policyId) {
         return couponPolicyRepository.findById(policyId)
-                .filter(policy -> !policy.isDeleted())
                 .orElseThrow(() -> new CouponPolicyNotFoundException(policyId)); // CouponPolicyNotFoundException으로 변경
     }
 
