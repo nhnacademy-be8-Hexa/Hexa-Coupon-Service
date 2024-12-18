@@ -23,7 +23,7 @@ public class CouponPolicyController {
 
     // 모든 쿠폰 정책 조회
     @GetMapping
-    public ResponseEntity<List<CouponPolicy>> getAllPolicies(
+    public ResponseEntity<List<CouponPolicy>> getPolicies(
             @RequestParam(name = "deleted", required = false, defaultValue = "false") Boolean deleted
     ) {
         List<CouponPolicy> policies = couponPolicyService.getAllPolicies(deleted);
@@ -34,6 +34,15 @@ public class CouponPolicyController {
     @GetMapping("/{policyId}")
     public ResponseEntity<CouponPolicy> getPolicyById(@PathVariable(name = "policyId") Long policyId) {
         CouponPolicy policy = couponPolicyService.getPolicyById(policyId);
+        return ResponseEntity.ok(policy);
+    }
+
+    // 특정 이벤트 타입의 쿠폰 정책 조회
+    @GetMapping("/{eventType}/eventType")
+    public ResponseEntity<CouponPolicy> getPolicyByEventType(
+            @PathVariable("eventType") String eventType
+    ){
+        CouponPolicy policy = couponPolicyService.getPolicyByEventType(eventType);
         return ResponseEntity.ok(policy);
     }
 
