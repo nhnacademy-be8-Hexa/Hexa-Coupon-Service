@@ -1,6 +1,6 @@
 package com.nhnacademy.coupon.controller;
 
-import com.nhnacademy.coupon.entity.Dto.CouponRequestDTO;
+import com.nhnacademy.coupon.entity.dto.CouponRequestDTO;
 import com.nhnacademy.coupon.entity.Coupon;
 import com.nhnacademy.coupon.service.CouponService;
 import jakarta.validation.Valid;
@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -32,7 +31,7 @@ public class CouponController {
             @RequestBody(required = false) List<Long> couponIds,
             @RequestParam(name = "active", required = false, defaultValue = "true") Boolean active
     ) {
-        List<Coupon> couponList = new ArrayList<>();
+        List<Coupon> couponList;
         if(couponIds != null) {
             couponList = couponService.getCouponsByIdsAndActive(couponIds, active);
         }

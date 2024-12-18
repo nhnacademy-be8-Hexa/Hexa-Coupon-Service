@@ -1,7 +1,7 @@
 package com.nhnacademy.coupon.service;
 
 import com.nhnacademy.coupon.entity.CouponPolicy;
-import com.nhnacademy.coupon.entity.Dto.CouponPolicyRequestDTO;
+import com.nhnacademy.coupon.entity.dto.CouponPolicyRequestDTO;
 import com.nhnacademy.coupon.exception.CouponPolicyNotFoundException;
 import com.nhnacademy.coupon.exception.InvalidCouponPolicyRequestException;
 import com.nhnacademy.coupon.repository.CouponPolicyRepository;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CouponPolicyServiceTest {
+class CouponPolicyServiceTest {
 
     @Mock
     private CouponPolicyRepository couponPolicyRepository;
@@ -51,7 +51,7 @@ public class CouponPolicyServiceTest {
     }
 
     @Test
-    public void testCreatePolicy() {
+     void testCreatePolicy() {
         // given
         when(couponPolicyRepository.save(any(CouponPolicy.class))).thenReturn(couponPolicy);
 
@@ -67,7 +67,7 @@ public class CouponPolicyServiceTest {
     }
 
     @Test
-    public void testCreatePolicyInvalidData() {
+     void testCreatePolicyInvalidData() {
         // given
         CouponPolicyRequestDTO invalidCouponPolicyDTO = null;
 
@@ -76,7 +76,7 @@ public class CouponPolicyServiceTest {
     }
 
     @Test
-    public void testUpdatePolicy() {
+     void testUpdatePolicy() {
         // given
         when(couponPolicyRepository.findById(anyLong())).thenReturn(Optional.of(couponPolicy));
         when(couponPolicyRepository.save(any(CouponPolicy.class))).thenReturn(couponPolicy);
@@ -94,7 +94,7 @@ public class CouponPolicyServiceTest {
     }
 
     @Test
-    public void testUpdatePolicyNotFound() {
+     void testUpdatePolicyNotFound() {
         // given
         when(couponPolicyRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -103,7 +103,7 @@ public class CouponPolicyServiceTest {
     }
 
     @Test
-    public void testDeletePolicy() {
+     void testDeletePolicy() {
         // given
         when(couponPolicyRepository.findById(anyLong())).thenReturn(Optional.of(couponPolicy));
 
@@ -115,7 +115,7 @@ public class CouponPolicyServiceTest {
     }
 
     @Test
-    public void testDeletePolicyNotFound() {
+     void testDeletePolicyNotFound() {
         // given
         when(couponPolicyRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -124,7 +124,7 @@ public class CouponPolicyServiceTest {
     }
 
     @Test
-    public void testGetAllPolicies() {
+     void testGetAllPolicies() {
         // given
         when(couponPolicyRepository.findByIsDeleted(anyBoolean())).thenReturn(List.of(couponPolicy));
 
@@ -139,7 +139,7 @@ public class CouponPolicyServiceTest {
     }
 
     @Test
-    public void testGetPolicyById() {
+     void testGetPolicyById() {
         // given
         when(couponPolicyRepository.findById(anyLong())).thenReturn(Optional.of(couponPolicy));
 
@@ -155,7 +155,7 @@ public class CouponPolicyServiceTest {
     }
 
     @Test
-    public void testGetPolicyByIdNotFound() {
+     void testGetPolicyByIdNotFound() {
         // given
         when(couponPolicyRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -164,7 +164,7 @@ public class CouponPolicyServiceTest {
     }
 
     @Test
-    public void testGetPolicyByEventType() {
+     void testGetPolicyByEventType() {
         // given
         when(couponPolicyRepository.findByEventType(anyString())).thenReturn(couponPolicy);
 
@@ -180,7 +180,7 @@ public class CouponPolicyServiceTest {
     }
 
     @Test
-    public void testGetPolicyByEventTypeNotFound() {
+     void testGetPolicyByEventTypeNotFound() {
         // given
         when(couponPolicyRepository.findByEventType(anyString())).thenReturn(null);
 

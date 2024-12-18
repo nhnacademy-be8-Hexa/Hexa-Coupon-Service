@@ -2,7 +2,7 @@ package com.nhnacademy.coupon.service;
 
 import com.nhnacademy.coupon.entity.Coupon;
 import com.nhnacademy.coupon.entity.CouponPolicy;
-import com.nhnacademy.coupon.entity.Dto.CouponRequestDTO;
+import com.nhnacademy.coupon.entity.dto.CouponRequestDTO;
 import com.nhnacademy.coupon.exception.CouponNotFoundException;
 import com.nhnacademy.coupon.exception.InvalidCouponRequestException;
 import com.nhnacademy.coupon.repository.CouponRepository;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CouponServiceTest {
+class CouponServiceTest {
 
     @Mock
     private CouponRepository couponRepository;
@@ -40,7 +40,7 @@ public class CouponServiceTest {
     private CouponRequestDTO couponRequestDTO;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         // CouponPolicy 객체는 빌더 패턴으로 생성
         couponPolicy = CouponPolicy.builder()
                 .couponPolicyId(1L)
@@ -72,7 +72,7 @@ public class CouponServiceTest {
 
     @Test
     @DisplayName("쿠폰 생성")
-    public void testCreateCoupon() {
+    void testCreateCoupon() {
         // given
         when(couponPolicyRepository.findById(1L)).thenReturn(Optional.of(couponPolicy));
         when(couponRepository.saveAll(anyList())).thenReturn(List.of(coupon));
@@ -89,14 +89,14 @@ public class CouponServiceTest {
 
     @Test
     @DisplayName("잘못된 카운트로 쿠폰 생성")
-    public void testCreateCouponWithInvalidCount() {
+    void testCreateCouponWithInvalidCount() {
         // when & then
         assertThrows(InvalidCouponRequestException.class, () -> couponService.createCoupon(couponRequestDTO, 0));
     }
 
     @Test
     @DisplayName("잘못된 정책 아이디로 쿠폰 생성")
-    public void testCreateCouponWithInvalidPolicyId() {
+    void testCreateCouponWithInvalidPolicyId() {
         // given
         when(couponPolicyRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -106,7 +106,7 @@ public class CouponServiceTest {
 
     @Test
     @DisplayName("쿠폰 사용")
-    public void testUseCoupon() {
+    void testUseCoupon() {
         // given
         when(couponRepository.findById(1L)).thenReturn(Optional.of(coupon));
 
@@ -122,7 +122,7 @@ public class CouponServiceTest {
 
     @Test
     @DisplayName("없는 쿠폰 사용")
-    public void testUseCouponNotFound() {
+    void testUseCouponNotFound() {
         // given
         when(couponRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -132,7 +132,7 @@ public class CouponServiceTest {
 
     @Test
     @DisplayName("쿠폰 비활성화")
-    public void testDeactivateCoupon() {
+    void testDeactivateCoupon() {
         // given
         when(couponRepository.findById(1L)).thenReturn(Optional.of(coupon));
 
@@ -146,7 +146,7 @@ public class CouponServiceTest {
 
     @Test
     @DisplayName("없는 쿠폰 비활성화")
-    public void testDeactivateCouponNotFound() {
+    void testDeactivateCouponNotFound() {
         // given
         when(couponRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -156,7 +156,7 @@ public class CouponServiceTest {
 
     @Test
     @DisplayName("쿠폰 조회")
-    public void testGetCouponById() {
+    void testGetCouponById() {
         // given
         when(couponRepository.findById(1L)).thenReturn(Optional.of(coupon));
 
@@ -172,7 +172,7 @@ public class CouponServiceTest {
 
     @Test
     @DisplayName("없는 쿠폰 조회")
-    public void testGetCouponByIdNotFound() {
+    void testGetCouponByIdNotFound() {
         // given
         when(couponRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -182,7 +182,7 @@ public class CouponServiceTest {
 
     @Test
     @DisplayName("활성 쿠폰 리스트로 조회")
-    public void testGetCouponsByIdsAndActive() {
+    void testGetCouponsByIdsAndActive() {
         // given
         List<Long> couponIds = List.of(1L);
         when(couponRepository.findByCouponIdInAndCouponIsActive(couponIds, true)).thenReturn(List.of(coupon));
@@ -198,7 +198,7 @@ public class CouponServiceTest {
 
     @Test
     @DisplayName("활성 쿠폰 조회")
-    public void testGetCouponsByActive() {
+    void testGetCouponsByActive() {
         // given
         when(couponRepository.findByCouponIsActive(true)).thenReturn(List.of(coupon));
 
@@ -213,14 +213,14 @@ public class CouponServiceTest {
 
     @Test
     @DisplayName("Null 리스트로 조회")
-    public void testGetCouponsByIdsAndActiveWithNullCouponIds() {
+    void testGetCouponsByIdsAndActiveWithNullCouponIds() {
         // when & then
         assertThrows(InvalidCouponRequestException.class, () -> couponService.getCouponsByIdsAndActive(null, true));
     }
 
     @Test
     @DisplayName("빈 리스트로 조회")
-    public void testGetCouponsByIdsAndActiveWithEmptyCouponIds() {
+    void testGetCouponsByIdsAndActiveWithEmptyCouponIds() {
         // given
         List<Long> emptyCouponIds = new ArrayList<>();
 

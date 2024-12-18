@@ -1,6 +1,6 @@
 package com.nhnacademy.coupon.service;
 
-import com.nhnacademy.coupon.entity.Dto.CouponRequestDTO;
+import com.nhnacademy.coupon.entity.dto.CouponRequestDTO;
 import com.nhnacademy.coupon.exception.CouponNotFoundException;
 import com.nhnacademy.coupon.exception.InvalidCouponRequestException;
 import lombok.RequiredArgsConstructor;

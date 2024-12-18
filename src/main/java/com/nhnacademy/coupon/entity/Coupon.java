@@ -43,7 +43,7 @@ public class Coupon {
 
     private ZonedDateTime couponUsedAt;
 
-    static public Coupon of(CouponPolicy couponPolicy,
+    public static Coupon of(CouponPolicy couponPolicy,
                             String couponName,
                             String couponTarget,
                             Long couponTargetId,

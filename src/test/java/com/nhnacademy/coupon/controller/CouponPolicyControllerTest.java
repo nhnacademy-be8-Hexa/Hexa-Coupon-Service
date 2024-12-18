@@ -2,7 +2,7 @@ package com.nhnacademy.coupon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.coupon.entity.CouponPolicy;
-import com.nhnacademy.coupon.entity.Dto.CouponPolicyRequestDTO;
+import com.nhnacademy.coupon.entity.dto.CouponPolicyRequestDTO;
 import com.nhnacademy.coupon.service.CouponPolicyService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

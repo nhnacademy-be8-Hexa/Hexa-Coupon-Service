@@ -1,4 +1,4 @@
-package com.nhnacademy.coupon.entity.Dto;
+package com.nhnacademy.coupon.entity.dto;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;

@@ -1,14 +1,10 @@
 package com.nhnacademy.coupon.controller;
 
-import com.nhnacademy.coupon.entity.Dto.CouponPolicyRequestDTO;
-import com.nhnacademy.coupon.exception.CouponPolicyNotFoundException;
-import com.nhnacademy.coupon.exception.InvalidCouponPolicyRequestException;
+import com.nhnacademy.coupon.entity.dto.CouponPolicyRequestDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import com.nhnacademy.coupon.entity.CouponPolicy;
 import com.nhnacademy.coupon.service.CouponPolicyService;
-import org.hibernate.annotations.Parameter;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

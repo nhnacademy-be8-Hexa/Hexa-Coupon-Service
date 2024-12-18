@@ -1,6 +1,6 @@
 package com.nhnacademy.coupon.service;
 
-import com.nhnacademy.coupon.entity.Dto.CouponPolicyRequestDTO;
+import com.nhnacademy.coupon.entity.dto.CouponPolicyRequestDTO;
 import com.nhnacademy.coupon.exception.CouponPolicyNotFoundException;
 import com.nhnacademy.coupon.exception.InvalidCouponPolicyRequestException;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,6 @@ import com.nhnacademy.coupon.repository.CouponPolicyRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +44,7 @@ public class CouponPolicyService {
                 .orElseThrow(() -> new CouponPolicyNotFoundException(policyId)); // CouponPolicyNotFoundException으로 변경
 
         // 기존 정책을 비활성화
-        CouponPolicy deletedPolicy = existingPolicy.markAsDeleted();
+        existingPolicy.markAsDeleted();
 
         // 새 정책 저장 및 반환
         return createPolicy(updatedPolicyDTO);

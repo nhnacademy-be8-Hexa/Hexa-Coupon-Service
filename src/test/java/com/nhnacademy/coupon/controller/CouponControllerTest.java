@@ -3,7 +3,7 @@ package com.nhnacademy.coupon.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.coupon.entity.Coupon;
 import com.nhnacademy.coupon.entity.CouponPolicy;
-import com.nhnacademy.coupon.entity.Dto.CouponRequestDTO;
+import com.nhnacademy.coupon.entity.dto.CouponRequestDTO;
 import com.nhnacademy.coupon.service.CouponService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
