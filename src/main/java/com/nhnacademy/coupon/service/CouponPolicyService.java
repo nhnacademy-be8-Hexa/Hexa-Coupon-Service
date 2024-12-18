@@ -30,7 +30,8 @@ public class CouponPolicyService {
                 couponPolicyDTO.minPurchaseAmount(),
                 couponPolicyDTO.discountType(),
                 couponPolicyDTO.discountValue(),
-                couponPolicyDTO.maxDiscountAmount()
+                couponPolicyDTO.maxDiscountAmount(),
+                couponPolicyDTO.eventType()
         );
 
         return couponPolicyRepository.save(newPolicy);
@@ -46,17 +47,8 @@ public class CouponPolicyService {
         // 기존 정책을 비활성화
         CouponPolicy deletedPolicy = existingPolicy.markAsDeleted();
 
-        // 새로운 정책 생성
-        CouponPolicy newPolicy = CouponPolicy.of(
-                updatedPolicyDTO.couponPolicyName(),
-                updatedPolicyDTO.minPurchaseAmount(),
-                updatedPolicyDTO.discountType(),
-                updatedPolicyDTO.discountValue(),
-                updatedPolicyDTO.maxDiscountAmount()
-        );
-
         // 새 정책 저장 및 반환
-        return couponPolicyRepository.save(newPolicy);
+        return createPolicy(updatedPolicyDTO);
     }
 
     // 쿠폰 정책 삭제
@@ -70,7 +62,7 @@ public class CouponPolicyService {
 
     // 쿠폰 정책 조회
     public List<CouponPolicy> getAllPolicies(boolean deleted) {
-        return couponPolicyRepository.findByDeleted(deleted);
+        return couponPolicyRepository.findByIsDeleted(deleted);
     }
 
 
@@ -78,6 +70,15 @@ public class CouponPolicyService {
     public CouponPolicy getPolicyById(Long policyId) {
         return couponPolicyRepository.findById(policyId)
                 .orElseThrow(() -> new CouponPolicyNotFoundException(policyId)); // CouponPolicyNotFoundException으로 변경
+    }
+
+    // 이벤트 타입으로 정책 찾기 (welcome, birthday)
+    public CouponPolicy getPolicyByEventType(String eventType) {
+        CouponPolicy couponPolicy = couponPolicyRepository.findByEventType(eventType);
+        if(couponPolicy == null) {
+            throw new CouponPolicyNotFoundException("event type: %s Coupon Policy Not found.".formatted(eventType));
+        }
+        return couponPolicy;
     }
 
 }

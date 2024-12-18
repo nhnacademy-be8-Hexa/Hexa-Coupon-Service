@@ -1,9 +1,6 @@
 package com.nhnacademy.coupon.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -57,7 +54,8 @@ public class CouponPolicy {
              int minPurchaseAmount,
              String discountType,
              int discountValue,
-             int maxDiscountAmount
+             int maxDiscountAmount,
+             String eventType
     ) {
         return CouponPolicy.builder()
                 .couponPolicyName(couponPolicyName)  // 새로운 정책명
@@ -66,7 +64,7 @@ public class CouponPolicy {
                 .discountValue(discountValue)         // 새로운 할인 값
                 .maxDiscountAmount(maxDiscountAmount) // 새로운 최대 할인 금액
                 .isDeleted(false)
-                .eventType(null)                        // 새로운 이벤트 타입
+                .eventType(eventType)                        // 새로운 이벤트 타입
                 .createdAt(ZonedDateTime.now())        // 새로운 생성 시간
                 .build();
     }
