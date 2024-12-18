@@ -55,7 +55,10 @@ public class CouponPolicyController {
 
     // 쿠폰 정책 수정
     @PatchMapping("/{policyId}")
-    public ResponseEntity<CouponPolicy> updatePolicy(@PathVariable(name = "policyId") Long policyId, @RequestBody @Valid CouponPolicyRequestDTO updatedPolicy) {
+    public ResponseEntity<CouponPolicy> updatePolicy(
+            @PathVariable(name = "policyId") Long policyId,
+            @RequestBody @Valid CouponPolicyRequestDTO updatedPolicy
+    ) {
         CouponPolicy policy = couponPolicyService.updatePolicy(policyId, updatedPolicy);
         return ResponseEntity.ok(policy);
 

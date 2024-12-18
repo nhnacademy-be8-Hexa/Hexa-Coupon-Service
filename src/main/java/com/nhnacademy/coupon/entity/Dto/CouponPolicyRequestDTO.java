@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.hibernate.validator.constraints.Length;
 
-import java.time.ZonedDateTime;
-
 public record CouponPolicyRequestDTO(
         @NotBlank
         @Length(max = 50) String couponPolicyName,
@@ -17,7 +15,5 @@ public record CouponPolicyRequestDTO(
         @NotNull
         @PositiveOrZero int discountValue,
         @PositiveOrZero int maxDiscountAmount,
-        @NotNull boolean isDeleted,
-        @Length(max = 20) String eventType,
-        @NotNull ZonedDateTime createdAt
+        @Length(max = 20) String eventType
 ) {}
