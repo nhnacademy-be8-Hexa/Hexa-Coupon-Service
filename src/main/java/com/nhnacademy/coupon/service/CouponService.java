@@ -32,11 +32,6 @@ public class CouponService {
         CouponPolicy couponPolicy = couponPolicyRepository.findById(couponDTO.couponPolicyId())
                 .orElseThrow(() -> new InvalidCouponRequestException("Invalid coupon policy ID"));
 
-//        // @Future 조건 수동 체크
-//        if (couponDTO.couponDeadline().isBefore(ZonedDateTime.now())) {
-//            throw new InvalidCouponRequestException("쿠폰 마감일은 현재 시점 이후여야 합니다.");
-//        }
-
         List<Coupon> coupons = new ArrayList<>();
 
         // 요청된 개수만큼 쿠폰을 복제하여 생성
@@ -100,5 +95,6 @@ public class CouponService {
     public List<Coupon> getCouponsByActive(Boolean active) {
         return couponRepository.findByCouponIsActive(active);
     }
+
 
 }
