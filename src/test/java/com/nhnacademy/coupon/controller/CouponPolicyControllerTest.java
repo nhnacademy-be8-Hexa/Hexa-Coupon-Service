@@ -42,7 +42,7 @@ class CouponPolicyControllerTest {
 
         when(couponPolicyService.getAllPolicies(false)).thenReturn(policies);
 
-        mockMvc.perform(get("/api/policies?deleted=false"))
+        mockMvc.perform(get("/api/auth/policies?deleted=false"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].couponPolicyName").value("Policy1"));
@@ -56,7 +56,7 @@ class CouponPolicyControllerTest {
 
         when(couponPolicyService.getPolicyById(1L)).thenReturn(policy);
 
-        mockMvc.perform(get("/api/policies/1"))
+        mockMvc.perform(get("/api/auth/policies/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.couponPolicyName").value("Policy1"));
     }
@@ -69,7 +69,7 @@ class CouponPolicyControllerTest {
 
         when(couponPolicyService.getPolicyByEventType("welcome")).thenReturn(policy);
 
-        mockMvc.perform(get("/api/policies/welcome/eventType"))
+        mockMvc.perform(get("/api/auth/policies/welcome/eventType"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.couponPolicyName").value("Policy1"));
     }
@@ -93,7 +93,7 @@ class CouponPolicyControllerTest {
 
         when(couponPolicyService.createPolicy(requestDTO)).thenReturn(createdPolicy);
 
-        mockMvc.perform(post("/api/policies")
+        mockMvc.perform(post("/api/auth/policies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
@@ -118,7 +118,7 @@ class CouponPolicyControllerTest {
 
         when(couponPolicyService.updatePolicy(1L, requestDTO)).thenReturn(updatedPolicy);
 
-        mockMvc.perform(patch("/api/policies/1")
+        mockMvc.perform(patch("/api/auth/policies/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
@@ -130,7 +130,7 @@ class CouponPolicyControllerTest {
     void testDeletePolicy() throws Exception {
         doNothing().when(couponPolicyService).deletePolicy(1L);
 
-        mockMvc.perform(delete("/api/policies/1"))
+        mockMvc.perform(delete("/api/auth/policies/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Coupon policy deleted successfully"));
     }

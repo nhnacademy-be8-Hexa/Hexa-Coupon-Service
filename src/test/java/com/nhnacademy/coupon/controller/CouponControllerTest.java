@@ -81,7 +81,7 @@ class CouponControllerTest {
 
         when(couponService.getCouponsByActive(true)).thenReturn(coupons);
 
-        mockMvc.perform(get("/api/coupons?active=true"))
+        mockMvc.perform(get("/api/auth/coupons?active=true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].couponName").value("New Year Coupon"));
@@ -106,7 +106,7 @@ class CouponControllerTest {
 
         when(couponService.createCoupon(requestDTO, 1)).thenReturn(Arrays.asList(coupon));
 
-        mockMvc.perform(post("/api/coupons?count=1")
+        mockMvc.perform(post("/api/auth/coupons?count=1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
@@ -131,7 +131,7 @@ class CouponControllerTest {
 
         when(couponService.useCoupon(1L)).thenReturn(coupon);
 
-        mockMvc.perform(post("/api/coupons/1/use"))
+        mockMvc.perform(post("/api/auth/coupons/1/use"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.couponName").value("Coupon1"));
     }
@@ -141,7 +141,7 @@ class CouponControllerTest {
     void testDeactivateCoupon() throws Exception {
         doNothing().when(couponService).deactivateCoupon(1L);
 
-        mockMvc.perform(post("/api/coupons/1/deactivate"))
+        mockMvc.perform(post("/api/auth/coupons/1/deactivate"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Coupon deactivated successfully"));
     }
@@ -162,7 +162,7 @@ class CouponControllerTest {
 
         when(couponService.getCouponById(1L)).thenReturn(coupon);
 
-        mockMvc.perform(get("/api/coupons/1"))
+        mockMvc.perform(get("/api/auth/coupons/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.couponName").value("Coupon1"));
     }
@@ -193,7 +193,7 @@ class CouponControllerTest {
         when(couponService.getCouponsByIdsAndActive(couponIds, true)).thenReturn(coupons);
 
         // when & then
-        mockMvc.perform(get("/api/coupons")
+        mockMvc.perform(get("/api/auth/coupons")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("[1, 2, 3]") // couponIds를 body로 전달
                         .param("active", "true"))
@@ -213,9 +213,9 @@ class CouponControllerTest {
         CouponRequestDTO couponRequestDTO = new CouponRequestDTO(1L, "Coupon 1", "USER", 100L, ZonedDateTime.now().plusDays(1));
 
         // when & then
-        mockMvc.perform(post("/api/coupons")
+        mockMvc.perform(post("/api/auth/coupons")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"couponPolicyId\": 1, \"couponName\": \"Coupon 1\", \"couponTarget\": \"USER\", \"couponTargetId\": 100, \"couponDeadline\": \"2024-12-19T00:00:00Z\"}")
+                        .content("{\"couponPolicyId\": 1, \"couponName\": \"Coupon 1\", \"couponTarget\": \"USER\", \"couponTargetId\": 100, \"couponDeadline\": \"2026-12-19T00:00:00Z\"}")
                         .param("count", "-1"))  // count = -1
                 .andExpect(status().isBadRequest()) // 상태 코드 400을 확인
                 .andExpect(content().json("[]"));  // 빈 배열이 반환되도록 설정

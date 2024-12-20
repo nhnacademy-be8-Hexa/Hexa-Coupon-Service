@@ -1,10 +1,10 @@
 ### 1. 쿠폰 조회 (쿠폰 ID로 조회)
-GET http://localhost:8083/api/coupons/1
+GET http://localhost:8083/api/auth/coupons/1
 Accept: application/json
 
 ### 2. 모든 쿠폰 조회 (active 상태 필터링)
 ### 2-1. 특정 couponIds 리스트로 조회
-GET http://localhost:8083/api/coupons
+GET http://localhost:8083/api/auth/coupons
 Content-Type: application/json
 Accept: application/json
 
@@ -13,12 +13,12 @@ Accept: application/json
 ]
 
 ### 2-2. active=false로 필터링
-GET http://localhost:8083/api/coupons?active=false
+GET http://localhost:8083/api/auth/coupons?active=false
 Accept: application/json
 
 ### 3. 쿠폰 생성
 # 단일 쿠폰 생성
-POST http://localhost:8083/api/coupons
+POST http://localhost:8083/api/auth/coupons
 Content-Type: application/json
 Accept: application/json
 
@@ -31,7 +31,7 @@ Accept: application/json
 }
 
 ### 다중 쿠폰 생성 (5개)
-POST http://localhost:8083/api/coupons?count=5
+POST http://localhost:8083/api/auth/coupons?count=5
 Content-Type: application/json
 Accept: application/json
 
@@ -44,9 +44,9 @@ Accept: application/json
 }
 
 ### 4. 쿠폰 사용
-POST http://localhost:8083/api/coupons/1/use
+POST http://localhost:8083/api/auth/coupons/1/use
 Accept: application/json
 
 ### 5. 쿠폰 비활성화 (삭제 처리)
-POST http://localhost:8083/api/coupons/1/deactivate
+POST http://localhost:8083/api/auth/coupons/1/deactivate
 Accept: application/json
