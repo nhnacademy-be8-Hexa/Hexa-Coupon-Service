@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/coupons")
 @RequiredArgsConstructor
+@RequestMapping("/api/auth/coupons")
 public class CouponController {
 
     private final CouponService couponService;
@@ -29,7 +29,7 @@ public class CouponController {
     @GetMapping
     public ResponseEntity<List<Coupon>> getCouponsByActive(
             @RequestBody(required = false) List<Long> couponIds,
-            @RequestParam(name = "active", required = false, defaultValue = "true") Boolean active
+            @RequestParam(name  = "active", required = false, defaultValue = "true") Boolean active
     ) {
         List<Coupon> couponList;
         if(couponIds != null) {

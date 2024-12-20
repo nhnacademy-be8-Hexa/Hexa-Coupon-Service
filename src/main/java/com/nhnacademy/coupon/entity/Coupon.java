@@ -21,6 +21,7 @@ public class Coupon {
 
     @ManyToOne
     @NotNull
+    @JoinColumn(name = "coupon_policy_id", nullable = false)
     private CouponPolicy couponPolicy;
 
     @NotBlank
