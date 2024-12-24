@@ -8,8 +8,8 @@ import com.nhnacademy.coupon.service.CouponService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -20,10 +20,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CouponController.class)
+@AutoConfigureRestDocs
 @ActiveProfiles("test")
 class CouponControllerTest {
 
@@ -52,7 +57,6 @@ class CouponControllerTest {
                 .createdAt(ZonedDateTime.now())
                 .build();
     }
-
     // 1. 모든 쿠폰 조회 테스트
     @Test
     void testGetCouponsByActive() throws Exception {
@@ -87,7 +91,31 @@ class CouponControllerTest {
         mockMvc.perform(get("/api/auth/coupons?active=true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].couponName").value("New Year Coupon"));
+                .andExpect(jsonPath("$[0].couponName").value("New Year Coupon"))
+                .andDo(document("get-coupons-by-active",
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].couponId").description("쿠폰 ID"),
+                                fieldWithPath("[].couponName").description("쿠폰 이름"),
+                                fieldWithPath("[].couponTarget").description("쿠폰 대상"),
+                                fieldWithPath("[].couponTargetId").description("쿠폰 대상 ID"),
+                                fieldWithPath("[].couponDeadline").description("쿠폰 유효 기간"),
+                                fieldWithPath("[].couponCreatedAt").description("쿠폰 생성일"),
+                                fieldWithPath("[].couponIsActive").description("쿠폰 활성화 여부"),
+                                fieldWithPath("[].couponUsedAt").description("쿠폰 사용일").optional(),
+                                fieldWithPath("[].couponPolicy").description("쿠폰 정책"),
+                                fieldWithPath("[].couponPolicy.couponPolicyId").description("쿠폰 정책 ID"),
+                                fieldWithPath("[].couponPolicy.couponPolicyName").description("쿠폰 정책 이름"),
+                                fieldWithPath("[].couponPolicy.minPurchaseAmount").description("최소 구매 금액"),
+                                fieldWithPath("[].couponPolicy.discountType").description("할인 유형"),
+                                fieldWithPath("[].couponPolicy.discountValue").description("할인 값"),
+                                fieldWithPath("[].couponPolicy.maxDiscountAmount").description("최대 할인 금액"),
+                                fieldWithPath("[].couponPolicy.eventType").description("이벤트 유형").optional(),
+                                fieldWithPath("[].couponPolicy.createdAt").description("쿠폰 정책 생성일"),
+                                fieldWithPath("[].couponPolicy.deleted").description("쿠폰 정책 삭제 여부")
+                        )
+                ));
+
     }
 
     // 2. 쿠폰 생성 테스트
@@ -114,7 +142,37 @@ class CouponControllerTest {
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].couponName").value("Coupon1"));
+                .andExpect(jsonPath("$[0].couponName").value("Coupon1"))
+                .andDo(document("create-coupons",
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("couponPolicyId").description("쿠폰 정책 ID"),
+                                fieldWithPath("couponName").description("쿠폰 이름"),
+                                fieldWithPath("couponTarget").description("쿠폰 대상"),
+                                fieldWithPath("couponTargetId").description("쿠폰 대상 ID"),
+                                fieldWithPath("couponDeadline").description("쿠폰 유효 기간")
+                                ),
+                        responseFields(
+                                fieldWithPath("[].couponId").description("쿠폰 ID"),
+                                fieldWithPath("[].couponPolicy").description("쿠폰 정책"),
+                                fieldWithPath("[].couponPolicy.couponPolicyId").description("쿠폰 정책 ID"),
+                                fieldWithPath("[].couponPolicy.couponPolicyName").description("쿠폰 정책 이름"),
+                                fieldWithPath("[].couponPolicy.minPurchaseAmount").description("최소 구매 금액"),
+                                fieldWithPath("[].couponPolicy.discountType").description("할인 유형"),
+                                fieldWithPath("[].couponPolicy.discountValue").description("할인 값"),
+                                fieldWithPath("[].couponPolicy.maxDiscountAmount").description("최대 할인 금액"),
+                                fieldWithPath("[].couponPolicy.eventType").description("이벤트 유형").optional(),
+                                fieldWithPath("[].couponPolicy.createdAt").description("쿠폰 정책 생성일"),
+                                fieldWithPath("[].couponPolicy.deleted").description("쿠폰 정책 삭제 여부"),
+                                fieldWithPath("[].couponName").description("쿠폰 이름"),
+                                fieldWithPath("[].couponTarget").description("쿠폰 대상"),
+                                fieldWithPath("[].couponTargetId").description("쿠폰 대상 ID"),
+                                fieldWithPath("[].couponDeadline").description("쿠폰 유효 기간"),
+                                fieldWithPath("[].couponCreatedAt").description("쿠폰 생성일"),
+                                fieldWithPath("[].couponIsActive").description("쿠폰 활성화 여부"),
+                                fieldWithPath("[].couponUsedAt").description("쿠폰 사용일").optional()
+                        )
+                ));
     }
 
     // 3. 쿠폰 사용 테스트
@@ -136,7 +194,30 @@ class CouponControllerTest {
 
         mockMvc.perform(post("/api/auth/coupons/1/use"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.couponName").value("Coupon1"));
+                .andExpect(jsonPath("$.couponName").value("Coupon1"))
+                .andDo(document("use-coupon",
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("couponId").description("쿠폰 ID"),
+                                fieldWithPath("couponPolicy").description("쿠폰 정책"),
+                                fieldWithPath("couponPolicy.couponPolicyId").description("쿠폰 정책 ID"),
+                                fieldWithPath("couponPolicy.couponPolicyName").description("쿠폰 정책 이름"),
+                                fieldWithPath("couponPolicy.minPurchaseAmount").description("최소 구매 금액"),
+                                fieldWithPath("couponPolicy.discountType").description("할인 유형"),
+                                fieldWithPath("couponPolicy.discountValue").description("할인 값"),
+                                fieldWithPath("couponPolicy.maxDiscountAmount").description("최대 할인 금액"),
+                                fieldWithPath("couponPolicy.eventType").description("이벤트 유형").optional(),
+                                fieldWithPath("couponPolicy.createdAt").description("쿠폰 정책 생성일"),
+                                fieldWithPath("couponPolicy.deleted").description("쿠폰 정책 삭제 여부"),
+                                fieldWithPath("couponName").description("쿠폰 이름"),
+                                fieldWithPath("couponTarget").description("쿠폰 대상"),
+                                fieldWithPath("couponTargetId").description("쿠폰 대상 ID"),
+                                fieldWithPath("couponDeadline").description("쿠폰 유효 기간"),
+                                fieldWithPath("couponCreatedAt").description("쿠폰 생성일"),
+                                fieldWithPath("couponIsActive").description("쿠폰 활성화 여부"),
+                                fieldWithPath("couponUsedAt").description("쿠폰 사용일").optional()
+                        )
+                ));
     }
 
     // 4. 쿠폰 비활성화 테스트
@@ -146,7 +227,13 @@ class CouponControllerTest {
 
         mockMvc.perform(post("/api/auth/coupons/1/deactivate"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Coupon deactivated successfully"));
+                .andExpect(jsonPath("$.message").value("Coupon deactivated successfully"))
+                .andDo(document("deactivate-coupon",
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("message").description("응답 메시지")
+                        )
+                ));
     }
 
     @Test
@@ -167,7 +254,30 @@ class CouponControllerTest {
 
         mockMvc.perform(get("/api/auth/coupons/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.couponName").value("Coupon1"));
+                .andExpect(jsonPath("$.couponName").value("Coupon1"))
+                .andDo(document("get-coupon-by-id",
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("couponId").description("쿠폰 ID"),
+                                fieldWithPath("couponPolicy").description("쿠폰 정책"),
+                                fieldWithPath("couponPolicy.couponPolicyId").description("쿠폰 정책 ID"),
+                                fieldWithPath("couponPolicy.couponPolicyName").description("쿠폰 정책 이름"),
+                                fieldWithPath("couponPolicy.minPurchaseAmount").description("최소 구매 금액"),
+                                fieldWithPath("couponPolicy.discountType").description("할인 유형"),
+                                fieldWithPath("couponPolicy.discountValue").description("할인 값"),
+                                fieldWithPath("couponPolicy.maxDiscountAmount").description("최대 할인 금액"),
+                                fieldWithPath("couponPolicy.eventType").description("이벤트 유형").optional(),
+                                fieldWithPath("couponPolicy.createdAt").description("쿠폰 정책 생성일"),
+                                fieldWithPath("couponPolicy.deleted").description("쿠폰 정책 삭제 여부"),
+                                fieldWithPath("couponName").description("쿠폰 이름"),
+                                fieldWithPath("couponTarget").description("쿠폰 대상"),
+                                fieldWithPath("couponTargetId").description("쿠폰 대상 ID"),
+                                fieldWithPath("couponDeadline").description("쿠폰 유효 기간"),
+                                fieldWithPath("couponCreatedAt").description("쿠폰 생성일"),
+                                fieldWithPath("couponIsActive").description("쿠폰 활성화 여부"),
+                                fieldWithPath("couponUsedAt").description("쿠폰 사용일").optional()
+                        )
+                ));
     }
 
     @Test
@@ -176,6 +286,7 @@ class CouponControllerTest {
         List<Long> couponIds = Arrays.asList(1L, 2L, 3L);
         Coupon coupon1 = Coupon.builder()
                 .couponId(1L)
+                .couponPolicy(couponPolicy)
                 .couponName("Coupon 1")
                 .couponTarget("USER")
                 .couponTargetId(100L)
@@ -184,6 +295,7 @@ class CouponControllerTest {
                 .build();
         Coupon coupon2 = Coupon.builder()
                 .couponId(2L)
+                .couponPolicy(couponPolicy)
                 .couponName("Coupon 2")
                 .couponTarget("USER")
                 .couponTargetId(101L)
@@ -204,7 +316,33 @@ class CouponControllerTest {
                 .andExpect(jsonPath("$[0].couponId").value(1L))
                 .andExpect(jsonPath("$[1].couponId").value(2L))
                 .andExpect(jsonPath("$[0].couponName").value("Coupon 1"))
-                .andExpect(jsonPath("$[1].couponName").value("Coupon 2"));
+                .andExpect(jsonPath("$[1].couponName").value("Coupon 2"))
+                .andDo(document("get-coupons-by-ids-and-active",
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("[]").description("쿠폰 ID 리스트")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].couponId").description("쿠폰 ID"),
+                                fieldWithPath("[].couponPolicy").description("쿠폰 정책"),
+                                fieldWithPath("[].couponPolicy.couponPolicyId").description("쿠폰 정책 ID"),
+                                fieldWithPath("[].couponPolicy.couponPolicyName").description("쿠폰 정책 이름"),
+                                fieldWithPath("[].couponPolicy.minPurchaseAmount").description("최소 구매 금액"),
+                                fieldWithPath("[].couponPolicy.discountType").description("할인 유형"),
+                                fieldWithPath("[].couponPolicy.discountValue").description("할인 값"),
+                                fieldWithPath("[].couponPolicy.maxDiscountAmount").description("최대 할인 금액"),
+                                fieldWithPath("[].couponPolicy.eventType").description("이벤트 유형").optional(),
+                                fieldWithPath("[].couponPolicy.createdAt").description("쿠폰 정책 생성일"),
+                                fieldWithPath("[].couponPolicy.deleted").description("쿠폰 정책 삭제 여부"),
+                                fieldWithPath("[].couponName").description("쿠폰 이름"),
+                                fieldWithPath("[].couponTarget").description("쿠폰 대상"),
+                                fieldWithPath("[].couponTargetId").description("쿠폰 대상 ID"),
+                                fieldWithPath("[].couponDeadline").description("쿠폰 유효 기간"),
+                                fieldWithPath("[].couponCreatedAt").description("쿠폰 생성일"),
+                                fieldWithPath("[].couponIsActive").description("쿠폰 활성화 여부"),
+                                fieldWithPath("[].couponUsedAt").description("쿠폰 사용일").optional()
+                        )
+                ));
 
         // verify
         verify(couponService, times(1)).getCouponsByIdsAndActive(couponIds, true);
@@ -221,7 +359,21 @@ class CouponControllerTest {
                         .content("{\"couponPolicyId\": 1, \"couponName\": \"Coupon 1\", \"couponTarget\": \"USER\", \"couponTargetId\": 100, \"couponDeadline\": \"2026-12-19T00:00:00Z\"}")
                         .param("count", "-1"))  // count = -1
                 .andExpect(status().isBadRequest()) // 상태 코드 400을 확인
-                .andExpect(content().json("[]"));  // 빈 배열이 반환되도록 설정
+                .andExpect(content().json("[]"))
+                .andDo(document("create-coupons-count-negative",
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        requestFields(  // 요청 본문 필드 문서화
+                                fieldWithPath("couponPolicyId").description("쿠폰 정책 ID"),
+                                fieldWithPath("couponName").description("쿠폰 이름"),
+                                fieldWithPath("couponTarget").description("쿠폰 대상"),
+                                fieldWithPath("couponTargetId").description("쿠폰 대상 ID"),
+                                fieldWithPath("couponDeadline").description("쿠폰 유효 기간")
+                        ),
+                        responseFields(  // 응답 필드 문서화
+                                fieldWithPath("[]").description("응답 내용은 빈 배열임")
+                        )
+                ));
+
 
         // verify
         verify(couponService, times(0)).createCoupon(any(), anyInt());  // couponService의 메서드가 호출되지 않음

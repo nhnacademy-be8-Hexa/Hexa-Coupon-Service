@@ -8,7 +8,9 @@ import com.nhnacademy.coupon.service.CouponPolicyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth/policies")
@@ -62,9 +64,14 @@ public class CouponPolicyController {
 
     // 쿠폰 정책 삭제
     @DeleteMapping("/{policyId}")
-    public ResponseEntity<String> deletePolicy(@PathVariable(name = "policyId") Long policyId) {
+    public ResponseEntity<Map<String, String>>  deletePolicy(@PathVariable(name = "policyId") Long policyId) {
         couponPolicyService.deletePolicy(policyId);
-        return ResponseEntity.ok("Coupon policy deleted successfully");
+
+        // 응답 메시지를 Map으로 반환하여 JSON 형식으로 보내기
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Coupon policy deleted successfully");
+
+        return ResponseEntity.ok(response);
     }
 
 }
