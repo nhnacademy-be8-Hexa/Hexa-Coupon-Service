@@ -23,8 +23,11 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 
 @WebMvcTest(CouponPolicyController.class)
 @AutoConfigureRestDocs
@@ -52,12 +55,16 @@ class CouponPolicyControllerTest {
 
         when(couponPolicyService.getAllPolicies(false)).thenReturn(policies);
 
-        mockMvc.perform(get("/api/auth/policies?deleted=false"))
+        mockMvc.perform(get("/api/auth/policies")
+                        .param("deleted", "false"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].couponPolicyName").value("Policy1"))
                 .andDo(document("get-policies",
                         preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("deleted").description("삭제 여부(true or false)")
+                        ),
                         responseFields(
                                 fieldWithPath("[].couponPolicyId").description("쿠폰 정책 ID"),
                                 fieldWithPath("[].couponPolicyName").description("쿠폰 정책 이름"),
@@ -80,11 +87,14 @@ class CouponPolicyControllerTest {
 
         when(couponPolicyService.getPolicyById(1L)).thenReturn(policy);
 
-        mockMvc.perform(get("/api/auth/policies/1"))
+        mockMvc.perform(get("/api/auth/policies/{couponPolicyId}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.couponPolicyName").value("Policy1"))
                 .andDo(document("get-policy-by-id",
                         preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("couponPolicyId").description("쿠폰정책 Id")
+                        ),
                         responseFields(
                                 fieldWithPath("couponPolicyId").description("쿠폰 정책 ID").type(JsonFieldType.NUMBER),
                                 fieldWithPath("couponPolicyName").description("쿠폰 정책 이름").type(JsonFieldType.STRING),
@@ -107,11 +117,14 @@ class CouponPolicyControllerTest {
 
         when(couponPolicyService.getPolicyByEventType("welcome")).thenReturn(policy);
 
-        mockMvc.perform(get("/api/auth/policies/welcome/eventType"))
+        mockMvc.perform(get("/api/auth/policies/{eventType}/eventType", "welcome"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.couponPolicyName").value("Policy1"))
                 .andDo(document("get-policy-by-event-type",
                         preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("eventType").description("이벤트 타입")
+                        ),
                         responseFields(
                                 fieldWithPath("couponPolicyId").description("쿠폰 정책 ID").type(JsonFieldType.NUMBER),
                                 fieldWithPath("couponPolicyName").description("쿠폰 정책 이름").type(JsonFieldType.STRING),
@@ -192,13 +205,16 @@ class CouponPolicyControllerTest {
 
         when(couponPolicyService.updatePolicy(1L, requestDTO)).thenReturn(updatedPolicy);
 
-        mockMvc.perform(patch("/api/auth/policies/1")
+        mockMvc.perform(patch("/api/auth/policies/{couponPolicyId}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.couponPolicyName").value("Updated Policy"))
                 .andDo(document("update-policy",
                         preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("couponPolicyId").description("쿠폰정책 Id")
+                        ),
                         requestFields(
                                 fieldWithPath("couponPolicyName").description("쿠폰 정책 이름").type(JsonFieldType.STRING),
                                 fieldWithPath("minPurchaseAmount").description("최소 구매 금액").type(JsonFieldType.NUMBER),
@@ -226,11 +242,14 @@ class CouponPolicyControllerTest {
     void testDeletePolicy() throws Exception {
         doNothing().when(couponPolicyService).deletePolicy(1L);
 
-        mockMvc.perform(delete("/api/auth/policies/1"))
+        mockMvc.perform(delete("/api/auth/policies/{couponPolicyId}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Coupon policy deleted successfully"))
                 .andDo(document("delete-policy",
                         preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("couponPolicyId").description("쿠폰정책 Id")
+                        ),
                         responseFields(
                                 fieldWithPath("message").description("응답 메시지")
                         )

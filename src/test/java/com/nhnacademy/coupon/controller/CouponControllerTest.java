@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -24,8 +25,11 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 
 @WebMvcTest(CouponController.class)
 @AutoConfigureRestDocs
@@ -88,12 +92,16 @@ class CouponControllerTest {
 
         when(couponService.getCouponsByActive(true)).thenReturn(coupons);
 
-        mockMvc.perform(get("/api/auth/coupons?active=true"))
+        mockMvc.perform(get("/api/auth/coupons")
+                        .param("active", "true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].couponName").value("New Year Coupon"))
                 .andDo(document("get-coupons-by-active",
                         preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("active").description("횔성화 여부를 나타내는 값 (true 또는 false)")
+                        ),
                         responseFields(
                                 fieldWithPath("[].couponId").description("쿠폰 ID"),
                                 fieldWithPath("[].couponName").description("쿠폰 이름"),
@@ -137,14 +145,18 @@ class CouponControllerTest {
 
         when(couponService.createCoupon(requestDTO, 1)).thenReturn(Arrays.asList(coupon));
 
-        mockMvc.perform(post("/api/auth/coupons?count=1")
+        mockMvc.perform(post("/api/auth/coupons")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDTO)))
+                        .content(objectMapper.writeValueAsString(requestDTO))
+                        .param("count", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].couponName").value("Coupon1"))
                 .andDo(document("create-coupons",
                         preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("count").description("생성 할 쿠폰 개수")
+                        ),
                         requestFields(
                                 fieldWithPath("couponPolicyId").description("쿠폰 정책 ID"),
                                 fieldWithPath("couponName").description("쿠폰 이름"),
@@ -192,11 +204,14 @@ class CouponControllerTest {
 
         when(couponService.useCoupon(1L)).thenReturn(coupon);
 
-        mockMvc.perform(post("/api/auth/coupons/1/use"))
+        mockMvc.perform(post("/api/auth/coupons/{couponId}/use", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.couponName").value("Coupon1"))
                 .andDo(document("use-coupon",
                         preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("couponId").description("쿠폰 Id")
+                        ),
                         responseFields(
                                 fieldWithPath("couponId").description("쿠폰 ID"),
                                 fieldWithPath("couponPolicy").description("쿠폰 정책"),
@@ -225,11 +240,14 @@ class CouponControllerTest {
     void testDeactivateCoupon() throws Exception {
         doNothing().when(couponService).deactivateCoupon(1L);
 
-        mockMvc.perform(post("/api/auth/coupons/1/deactivate"))
+        mockMvc.perform(post("/api/auth/coupons/{couponId}/deactivate", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Coupon deactivated successfully"))
                 .andDo(document("deactivate-coupon",
                         preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("couponId").description("쿠폰 Id")
+                        ),
                         responseFields(
                                 fieldWithPath("message").description("응답 메시지")
                         )
@@ -252,11 +270,14 @@ class CouponControllerTest {
 
         when(couponService.getCouponById(1L)).thenReturn(coupon);
 
-        mockMvc.perform(get("/api/auth/coupons/1"))
+        mockMvc.perform(get("/api/auth/coupons/{couponId}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.couponName").value("Coupon1"))
                 .andDo(document("get-coupon-by-id",
                         preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("couponId").description("쿠폰 Id")
+                        ),
                         responseFields(
                                 fieldWithPath("couponId").description("쿠폰 ID"),
                                 fieldWithPath("couponPolicy").description("쿠폰 정책"),
@@ -319,6 +340,9 @@ class CouponControllerTest {
                 .andExpect(jsonPath("$[1].couponName").value("Coupon 2"))
                 .andDo(document("get-coupons-by-ids-and-active",
                         preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("active").description("활성화 여부를 나타내는 값 (true 또는 false)")
+                        ),
                         requestFields(
                                 fieldWithPath("[]").description("쿠폰 ID 리스트")
                         ),

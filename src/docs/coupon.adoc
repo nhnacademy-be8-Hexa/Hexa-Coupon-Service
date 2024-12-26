@@ -5,11 +5,14 @@ Spring REST Docs
 :sectnums:
 
 == 활성화된 모든 쿠폰 조회
-active = false 일 경우 비활성화된 쿠폰
 
 === 요청
 
 include::{snippets}/get-coupons-by-active/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/get-coupons-by-active/query-parameters.adoc[]
 
 === 응답
 
@@ -24,6 +27,10 @@ include::{snippets}/get-coupons-by-active/response-fields.adoc[]
 === 요청
 
 include::{snippets}/get-coupons-by-ids-and-active/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/get-coupons-by-ids-and-active/query-parameters.adoc[]
 
 === 요청 필드
 
@@ -43,6 +50,10 @@ include::{snippets}/get-coupons-by-ids-and-active/request-fields.adoc[]
 
 include::{snippets}/get-coupon-by-id/http-request.adoc[]
 
+=== 경로 파라미터
+
+include::{snippets}/get-coupon-by-id/path-parameters.adoc[]
+
 === 응답
 
 include::{snippets}/get-coupon-by-id/http-response.adoc[]
@@ -56,6 +67,10 @@ include::{snippets}/get-coupon-by-id/response-fields.adoc[]
 === 요청
 
 include::{snippets}/create-coupons/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/create-coupons/query-parameters.adoc[]
 
 === 요청 필드
 
@@ -74,6 +89,10 @@ include::{snippets}/create-coupons/response-fields.adoc[]
 === 요청
 
 include::{snippets}/use-coupon/http-request.adoc[]
+
+=== 경로 파라미터
+
+include::{snippets}/use-coupon/path-parameters.adoc[]
 
 === 응답
 
