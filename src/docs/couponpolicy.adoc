@@ -28,7 +28,7 @@ include::{snippets}/get-policies/response-fields.adoc[]
 
 include::{snippets}/get-policy-by-id/http-request.adoc[]
 
-=== 요청 파라미터
+=== 경로 파라미터
 
 include::{snippets}/get-policy-by-id/path-parameters.adoc[]
 
@@ -46,7 +46,7 @@ include::{snippets}/get-policy-by-id/response-fields.adoc[]
 
 include::{snippets}/get-policy-by-event-type/http-request.adoc[]
 
-=== 요청 파라미터
+=== 경로 파라미터
 
 include::{snippets}/get-policy-by-event-type/path-parameters.adoc[]
 
@@ -82,7 +82,7 @@ include::{snippets}/create-policy/response-fields.adoc[]
 
 include::{snippets}/update-policy/http-request.adoc[]
 
-=== 요청 파라미터
+=== 경로 파라미터
 
 include::{snippets}/update-policy/path-parameters.adoc[]
 
@@ -104,7 +104,7 @@ include::{snippets}/update-policy/response-fields.adoc[]
 
 include::{snippets}/delete-policy/http-request.adoc[]
 
-=== 요청 파라미터
+=== 경로 파라미터
 
 include::{snippets}/deactivate-coupon/path-parameters.adoc[]
 
