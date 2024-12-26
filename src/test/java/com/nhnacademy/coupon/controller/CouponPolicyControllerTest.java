@@ -6,19 +6,29 @@ import com.nhnacademy.coupon.entity.dto.CouponPolicyRequestDTO;
 import com.nhnacademy.coupon.service.CouponPolicyService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CouponPolicyController.class)
+@AutoConfigureRestDocs
+@ActiveProfiles("test")
 class CouponPolicyControllerTest {
 
     @Autowired
@@ -45,33 +55,75 @@ class CouponPolicyControllerTest {
         mockMvc.perform(get("/api/auth/policies?deleted=false"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].couponPolicyName").value("Policy1"));
+                .andExpect(jsonPath("$[0].couponPolicyName").value("Policy1"))
+                .andDo(document("get-policies",
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].couponPolicyId").description("쿠폰 정책 ID"),
+                                fieldWithPath("[].couponPolicyName").description("쿠폰 정책 이름"),
+                                fieldWithPath("[].minPurchaseAmount").description("최소 구매 금액"),
+                                fieldWithPath("[].discountType").description("할인 유형"),
+                                fieldWithPath("[].discountValue").description("할인 값"),
+                                fieldWithPath("[].maxDiscountAmount").description("최대 할인 금액"),
+                                fieldWithPath("[].eventType").description("이벤트 타입"),
+                                fieldWithPath("[].createdAt").description("생성일"),
+                                fieldWithPath("[].deleted").description("삭제 여부")
+                        )
+                ));
     }
 
     // 2. 특정 쿠폰 정책 조회 테스트
     @Test
     void testGetPolicyById() throws Exception {
         CouponPolicy policy = CouponPolicy.builder().couponPolicyId(1L).couponPolicyName("Policy1").minPurchaseAmount(1000)
-                .discountType("discount").discountValue(10).maxDiscountAmount(100).isDeleted(false).eventType("welcome").createdAt(null).build();
+                .discountType("discount").discountValue(10).maxDiscountAmount(100).isDeleted(false).eventType("welcome").createdAt(ZonedDateTime.now().plusDays(30)).build();
 
         when(couponPolicyService.getPolicyById(1L)).thenReturn(policy);
 
         mockMvc.perform(get("/api/auth/policies/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.couponPolicyName").value("Policy1"));
+                .andExpect(jsonPath("$.couponPolicyName").value("Policy1"))
+                .andDo(document("get-policy-by-id",
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("couponPolicyId").description("쿠폰 정책 ID").type(JsonFieldType.NUMBER),
+                                fieldWithPath("couponPolicyName").description("쿠폰 정책 이름").type(JsonFieldType.STRING),
+                                fieldWithPath("minPurchaseAmount").description("최소 구매 금액").type(JsonFieldType.NUMBER),
+                                fieldWithPath("discountType").description("할인 타입").type(JsonFieldType.STRING),
+                                fieldWithPath("discountValue").description("할인 값").type(JsonFieldType.NUMBER),
+                                fieldWithPath("maxDiscountAmount").description("최대 할인 금액").type(JsonFieldType.NUMBER),
+                                fieldWithPath("eventType").description("이벤트 타입").type(JsonFieldType.STRING),
+                                fieldWithPath("createdAt").description("생성 일자").type(JsonFieldType.STRING),
+                                fieldWithPath("deleted").description("삭제 여부").type(JsonFieldType.BOOLEAN)
+                        )
+                ));
     }
 
     // 3. 특정 이벤트 타입의 쿠폰 정책 조회 테스트
     @Test
     void testGetPolicyByEventType() throws Exception {
         CouponPolicy policy = CouponPolicy.builder().couponPolicyId(1L).couponPolicyName("Policy1").minPurchaseAmount(1000)
-                .discountType("discount").discountValue(10).maxDiscountAmount(100).isDeleted(false).eventType("welcome").createdAt(null).build();
+                .discountType("discount").discountValue(10).maxDiscountAmount(100).isDeleted(false).eventType("welcome").createdAt(ZonedDateTime.now().plusDays(30)).build();
 
         when(couponPolicyService.getPolicyByEventType("welcome")).thenReturn(policy);
 
         mockMvc.perform(get("/api/auth/policies/welcome/eventType"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.couponPolicyName").value("Policy1"));
+                .andExpect(jsonPath("$.couponPolicyName").value("Policy1"))
+                .andDo(document("get-policy-by-event-type",
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("couponPolicyId").description("쿠폰 정책 ID").type(JsonFieldType.NUMBER),
+                                fieldWithPath("couponPolicyName").description("쿠폰 정책 이름").type(JsonFieldType.STRING),
+                                fieldWithPath("minPurchaseAmount").description("최소 구매 금액").type(JsonFieldType.NUMBER),
+                                fieldWithPath("discountType").description("할인 타입").type(JsonFieldType.STRING),
+                                fieldWithPath("discountValue").description("할인 값").type(JsonFieldType.NUMBER),
+                                fieldWithPath("maxDiscountAmount").description("최대 할인 금액").type(JsonFieldType.NUMBER),
+                                fieldWithPath("eventType").description("이벤트 타입").type(JsonFieldType.STRING),
+                                fieldWithPath("createdAt").description("생성 일자").type(JsonFieldType.STRING),
+                                fieldWithPath("deleted").description("삭제 여부").type(JsonFieldType.BOOLEAN)
+                        )
+                ));
     }
 
     // 4. 쿠폰 정책 생성 테스트
@@ -88,7 +140,7 @@ class CouponPolicyControllerTest {
                 .maxDiscountAmount(100)
                 .isDeleted(false)
                 .eventType("welcome")
-                .createdAt(null)
+                .createdAt(ZonedDateTime.now().plusDays(30))
                 .build();
 
         when(couponPolicyService.createPolicy(requestDTO)).thenReturn(createdPolicy);
@@ -97,7 +149,29 @@ class CouponPolicyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.couponPolicyName").value("Policy1"));
+                .andExpect(jsonPath("$.couponPolicyName").value("Policy1"))
+                .andDo(document("create-policy",
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("couponPolicyName").description("쿠폰 정책 이름").type(JsonFieldType.STRING),
+                                fieldWithPath("minPurchaseAmount").description("최소 구매 금액").type(JsonFieldType.NUMBER),
+                                fieldWithPath("discountType").description("할인 타입").type(JsonFieldType.STRING),
+                                fieldWithPath("discountValue").description("할인 값").type(JsonFieldType.NUMBER),
+                                fieldWithPath("maxDiscountAmount").description("최대 할인 금액").type(JsonFieldType.NUMBER),
+                                fieldWithPath("eventType").description("이벤트 타입").type(JsonFieldType.STRING)
+                        ),
+                        responseFields(
+                                fieldWithPath("couponPolicyId").description("쿠폰 정책 ID").type(JsonFieldType.NUMBER),
+                                fieldWithPath("couponPolicyName").description("쿠폰 정책 이름").type(JsonFieldType.STRING),
+                                fieldWithPath("minPurchaseAmount").description("최소 구매 금액").type(JsonFieldType.NUMBER),
+                                fieldWithPath("discountType").description("할인 타입").type(JsonFieldType.STRING),
+                                fieldWithPath("discountValue").description("할인 값").type(JsonFieldType.NUMBER),
+                                fieldWithPath("maxDiscountAmount").description("최대 할인 금액").type(JsonFieldType.NUMBER),
+                                fieldWithPath("eventType").description("이벤트 타입").type(JsonFieldType.STRING),
+                                fieldWithPath("createdAt").description("생성 일자").type(JsonFieldType.STRING),
+                                fieldWithPath("deleted").description("삭제 여부").type(JsonFieldType.BOOLEAN)
+                        )
+                ));
     }
 
     // 5. 쿠폰 정책 수정 테스트
@@ -113,7 +187,7 @@ class CouponPolicyControllerTest {
                 .maxDiscountAmount(200)
                 .isDeleted(false)
                 .eventType("birthday")
-                .createdAt(null)
+                .createdAt(ZonedDateTime.now().plusDays(30))
                 .build();
 
         when(couponPolicyService.updatePolicy(1L, requestDTO)).thenReturn(updatedPolicy);
@@ -122,7 +196,29 @@ class CouponPolicyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.couponPolicyName").value("Updated Policy"));
+                .andExpect(jsonPath("$.couponPolicyName").value("Updated Policy"))
+                .andDo(document("update-policy",
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("couponPolicyName").description("쿠폰 정책 이름").type(JsonFieldType.STRING),
+                                fieldWithPath("minPurchaseAmount").description("최소 구매 금액").type(JsonFieldType.NUMBER),
+                                fieldWithPath("discountType").description("할인 타입").type(JsonFieldType.STRING),
+                                fieldWithPath("discountValue").description("할인 값").type(JsonFieldType.NUMBER),
+                                fieldWithPath("maxDiscountAmount").description("최대 할인 금액").type(JsonFieldType.NUMBER),
+                                fieldWithPath("eventType").description("이벤트 타입").type(JsonFieldType.STRING)
+                        ),
+                        responseFields(
+                                fieldWithPath("couponPolicyId").description("쿠폰 정책 ID").type(JsonFieldType.NUMBER),
+                                fieldWithPath("couponPolicyName").description("쿠폰 정책 이름").type(JsonFieldType.STRING),
+                                fieldWithPath("minPurchaseAmount").description("최소 구매 금액").type(JsonFieldType.NUMBER),
+                                fieldWithPath("discountType").description("할인 타입").type(JsonFieldType.STRING),
+                                fieldWithPath("discountValue").description("할인 값").type(JsonFieldType.NUMBER),
+                                fieldWithPath("maxDiscountAmount").description("최대 할인 금액").type(JsonFieldType.NUMBER),
+                                fieldWithPath("deleted").description("삭제 여부").type(JsonFieldType.BOOLEAN),
+                                fieldWithPath("eventType").description("이벤트 타입").type(JsonFieldType.STRING),
+                                fieldWithPath("createdAt").description("생성 일자").type(JsonFieldType.STRING)
+                        )
+                ));
     }
 
     // 6. 쿠폰 정책 삭제 테스트
@@ -132,6 +228,12 @@ class CouponPolicyControllerTest {
 
         mockMvc.perform(delete("/api/auth/policies/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Coupon policy deleted successfully"));
+                .andExpect(jsonPath("$.message").value("Coupon policy deleted successfully"))
+                .andDo(document("delete-policy",
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("message").description("응답 메시지")
+                        )
+                ));
     }
 }

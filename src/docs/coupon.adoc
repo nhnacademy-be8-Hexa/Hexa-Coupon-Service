@@ -1,0 +1,86 @@
+= Coupon Documentation
+Spring REST Docs
+:toc: left
+:toclevels: 2
+:sectnums:
+
+== 활성화된 모든 쿠폰 조회
+active = false 일 경우 비활성화된 쿠폰
+
+=== 요청
+
+include::{snippets}/get-coupons-by-active/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/get-coupons-by-active/http-response.adoc[]
+
+=== 응답 필드
+
+include::{snippets}/get-coupons-by-active/response-fields.adoc[]
+
+== 쿠폰리스트 중 활성화된 쿠폰 조회
+
+=== 요청
+
+include::{snippets}/get-coupons-by-ids-and-active/http-request.adoc[]
+
+=== 요청 필드
+
+include::{snippets}/get-coupons-by-ids-and-active/request-fields.adoc[]
+
+=== 응답
+
+include::{snippets}/get-coupons-by-ids-and-active/http-response.adoc[]
+
+=== 응답 필드
+
+include::{snippets}/get-coupons-by-ids-and-active/request-fields.adoc[]
+
+== 특정 쿠폰 조회
+
+=== 요청
+
+include::{snippets}/get-coupon-by-id/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/get-coupon-by-id/http-response.adoc[]
+
+=== 응답 필드
+
+include::{snippets}/get-coupon-by-id/response-fields.adoc[]
+
+== 쿠폰 생성
+
+=== 요청
+
+include::{snippets}/create-coupons/http-request.adoc[]
+
+=== 요청 필드
+
+include::{snippets}/create-coupons/request-fields.adoc[]
+
+=== 응답
+
+include::{snippets}/create-coupons/http-response.adoc[]
+
+=== 응답 필드
+
+include::{snippets}/create-coupons/response-fields.adoc[]
+
+== 쿠폰 사용
+
+=== 요청
+
+include::{snippets}/use-coupon/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/use-coupon/http-response.adoc[]
+
+=== 응답 필드
+
+include::{snippets}/use-coupon/response-fields.adoc[]
+
+

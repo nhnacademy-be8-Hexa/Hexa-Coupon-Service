@@ -5,10 +5,13 @@ import com.nhnacademy.coupon.entity.Coupon;
 import com.nhnacademy.coupon.service.CouponService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -62,9 +65,14 @@ public class CouponController {
 
     // 쿠폰 비활성화 (삭제 처리)
     @PostMapping("/{couponId}/deactivate")
-    public ResponseEntity<String> deactivateCoupon(@PathVariable(name = "couponId") Long couponId) {
+    public ResponseEntity<Map<String, String>> deactivateCoupon(@PathVariable(name = "couponId") Long couponId) {
         couponService.deactivateCoupon(couponId);
-        return ResponseEntity.ok("Coupon deactivated successfully");
+
+        // 응답 메시지를 Map으로 반환하여 JSON 형식으로 보내기
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Coupon deactivated successfully");
+
+        return ResponseEntity.ok(response);
     }
 
 }
