@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.sql.DataSource;
 
@@ -22,7 +22,7 @@ public class DataSourceConfig {
 
         String databaseInfo = secureKeyManagerService.fetchSecretFromKeyManager();
         DatabaseCredentials databaseCredentials = new DatabaseCredentials(databaseInfo);
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUrl(databaseCredentials.getUrl());
         dataSource.setUsername(databaseCredentials.getUsername());
