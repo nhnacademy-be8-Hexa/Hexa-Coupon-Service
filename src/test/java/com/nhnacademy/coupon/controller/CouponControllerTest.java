@@ -29,7 +29,6 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 
 @WebMvcTest(CouponController.class)
 @AutoConfigureRestDocs
@@ -92,7 +91,7 @@ class CouponControllerTest {
 
         when(couponService.getCouponsByActive(true)).thenReturn(coupons);
 
-        mockMvc.perform(get("/api/auth/coupons")
+        mockMvc.perform(get("/api/coupons")
                         .param("active", "true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
@@ -145,7 +144,7 @@ class CouponControllerTest {
 
         when(couponService.createCoupon(requestDTO, 1)).thenReturn(Arrays.asList(coupon));
 
-        mockMvc.perform(post("/api/auth/coupons")
+        mockMvc.perform(post("/api/coupons")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO))
                         .param("count", "1"))
@@ -204,7 +203,7 @@ class CouponControllerTest {
 
         when(couponService.useCoupon(1L)).thenReturn(coupon);
 
-        mockMvc.perform(post("/api/auth/coupons/{couponId}/use", 1))
+        mockMvc.perform(post("/api/coupons/{couponId}/use", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.couponName").value("Coupon1"))
                 .andDo(document("use-coupon",
@@ -240,7 +239,7 @@ class CouponControllerTest {
     void testDeactivateCoupon() throws Exception {
         doNothing().when(couponService).deactivateCoupon(1L);
 
-        mockMvc.perform(post("/api/auth/coupons/{couponId}/deactivate", 1))
+        mockMvc.perform(post("/api/coupons/{couponId}/deactivate", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Coupon deactivated successfully"))
                 .andDo(document("deactivate-coupon",
@@ -270,7 +269,7 @@ class CouponControllerTest {
 
         when(couponService.getCouponById(1L)).thenReturn(coupon);
 
-        mockMvc.perform(get("/api/auth/coupons/{couponId}", 1))
+        mockMvc.perform(get("/api/coupons/{couponId}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.couponName").value("Coupon1"))
                 .andDo(document("get-coupon-by-id",
@@ -329,7 +328,7 @@ class CouponControllerTest {
         when(couponService.getCouponsByIdsAndActive(couponIds, true)).thenReturn(coupons);
 
         // when & then
-        mockMvc.perform(get("/api/auth/coupons")
+        mockMvc.perform(get("/api/coupons")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("[1, 2, 3]") // couponIds를 body로 전달
                         .param("active", "true"))
@@ -378,7 +377,7 @@ class CouponControllerTest {
         CouponRequestDTO couponRequestDTO = new CouponRequestDTO(1L, "Coupon 1", "USER", 100L, ZonedDateTime.now().plusDays(1));
 
         // when & then
-        mockMvc.perform(post("/api/auth/coupons")
+        mockMvc.perform(post("/api/coupons")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"couponPolicyId\": 1, \"couponName\": \"Coupon 1\", \"couponTarget\": \"USER\", \"couponTargetId\": 100, \"couponDeadline\": \"2026-12-19T00:00:00Z\"}")
                         .param("count", "-1"))  // count = -1

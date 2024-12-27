@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth/policies")
+@RequestMapping("/api/policies")
 @RequiredArgsConstructor
 public class CouponPolicyController {
 
