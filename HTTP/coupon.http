@@ -1,16 +1,16 @@
 ### 1. 쿠폰 조회 (쿠폰 ID로 조회)
-GET http://localhost:8083/auth/coupons/1
+GET http://localhost:8083/api/coupons/1
 Accept: application/json
 
 ### 2. 모든 쿠폰 조회 (active 상태 필터링)
 ### 2-1. 특정 couponIds 리스트로 조회
-GET http://localhost:8083/auth/coupons
+GET http://localhost:8083/api/coupons
 Content-Type: application/json
 Accept: application/json
 
-[
-  1, 2, 3
-]
+#[
+#  1, 2, 3
+#]
 
 ### 2-2. active=false로 필터링
 GET http://localhost:8083/api/coupons?active=false

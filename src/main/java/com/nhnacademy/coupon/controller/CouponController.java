@@ -31,7 +31,7 @@ public class CouponController {
     // Ids 리스트가 전달되면,
     @GetMapping
     public ResponseEntity<List<Coupon>> getCouponsByActive(
-            @RequestBody(required = false) List<Long> couponIds,
+            @RequestParam(required = false) List<Long> couponIds,
             @RequestParam(name  = "active", required = false, defaultValue = "true") Boolean active
     ) {
         List<Coupon> couponList;
