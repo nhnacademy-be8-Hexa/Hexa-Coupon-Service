@@ -330,8 +330,9 @@ class CouponControllerTest {
         // when & then
         mockMvc.perform(get("/api/coupons")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("[1, 2, 3]") // couponIds를 body로 전달
-                        .param("active", "true"))
+                        .content("[1, 2, 3]")
+                        .param("active", "true")
+                        .param("couponIds", "1, 2, 3"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].couponId").value(1L))
                 .andExpect(jsonPath("$[1].couponId").value(2L))
@@ -340,7 +341,8 @@ class CouponControllerTest {
                 .andDo(document("get-coupons-by-ids-and-active",
                         preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
                         queryParameters(
-                                parameterWithName("active").description("활성화 여부를 나타내는 값 (true 또는 false)")
+                                parameterWithName("active").description("활성화 여부를 나타내는 값 (true 또는 false)"),
+                                parameterWithName("couponIds").description("쿠폰 아이디 리스트")
                         ),
                         requestFields(
                                 fieldWithPath("[]").description("쿠폰 ID 리스트")

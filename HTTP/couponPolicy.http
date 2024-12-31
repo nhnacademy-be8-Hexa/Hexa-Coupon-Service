@@ -11,7 +11,7 @@ Content-Type: application/json
 }
 
 ### 쿠폰 정책 수정
-PATCH http://localhost:8083/api/policies/1
+PUT http://localhost:8083/api/policies/1
 Content-Type: application/json
 
 {
