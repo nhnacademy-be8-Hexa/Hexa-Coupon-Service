@@ -205,7 +205,7 @@ class CouponPolicyControllerTest {
 
         when(couponPolicyService.updatePolicy(1L, requestDTO)).thenReturn(updatedPolicy);
 
-        mockMvc.perform(patch("/api/policies/{couponPolicyId}", 1)
+        mockMvc.perform(put("/api/policies/{couponPolicyId}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
