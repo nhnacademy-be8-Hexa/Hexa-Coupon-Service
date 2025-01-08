@@ -96,5 +96,8 @@ public class CouponService {
         return couponRepository.findByCouponIsActive(active);
     }
 
+    public List<Coupon> getCouponsByCouponName(String couponName){
+        return couponRepository.findByCouponName(couponName);
+    }
 
 }

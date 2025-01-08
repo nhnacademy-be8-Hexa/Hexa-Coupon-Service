@@ -5,7 +5,6 @@ import com.nhnacademy.coupon.entity.Coupon;
 import com.nhnacademy.coupon.service.CouponService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +41,11 @@ public class CouponController {
             couponList = couponService.getCouponsByActive(active);
         }
         return ResponseEntity.ok(couponList);
+    }
+
+    @GetMapping("/{couponName}")
+    public ResponseEntity<List<Coupon>> getCouponsByCouponName(@PathVariable(name = "couponName") String couponName){
+        return ResponseEntity.ok(couponService.getCouponsByCouponName(couponName));
     }
 
     // 쿠폰 생성
