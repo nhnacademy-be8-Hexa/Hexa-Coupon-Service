@@ -43,7 +43,7 @@ public class CouponController {
         return ResponseEntity.ok(couponList);
     }
 
-    @GetMapping("/{couponName}")
+    @GetMapping("/{couponName}/name")
     public ResponseEntity<List<Coupon>> getCouponsByCouponName(@PathVariable(name = "couponName") String couponName){
         return ResponseEntity.ok(couponService.getCouponsByCouponName(couponName));
     }
