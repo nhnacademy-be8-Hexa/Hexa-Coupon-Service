@@ -10,11 +10,8 @@ public class LogCrashRequest {
     private String projectVersion;
     private String logVersion;
     private String body;
-    private String sendTime;
     private String logSource;
     private String logType;
-    private String category;
-    private String errorCodeType;
     private String host;
     private String logLevel;
 
