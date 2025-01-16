@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -404,4 +405,70 @@ class CouponControllerTest {
         verify(couponService, times(0)).createCoupon(any(), anyInt());  // couponService의 메서드가 호출되지 않음
     }
 
+    @Test
+    void testGetCouponsByCouponName() throws Exception {
+        // given
+        String couponName = "New Year Coupon";
+
+        List<Coupon> coupons = Arrays.asList(
+                Coupon.builder()
+                        .couponId(1L)
+                        .couponPolicy(couponPolicy)
+                        .couponName("New Year Coupon")
+                        .couponTarget("USER")
+                        .couponTargetId(123L)
+                        .couponDeadline(ZonedDateTime.now().plusDays(30))
+                        .couponCreatedAt(ZonedDateTime.now())
+                        .couponIsActive(true)
+                        .couponUsedAt(null)
+                        .build(),
+                Coupon.builder()
+                        .couponId(2L)
+                        .couponPolicy(couponPolicy)
+                        .couponName("New Year Coupon")
+                        .couponTarget("USER")
+                        .couponTargetId(123L)
+                        .couponDeadline(ZonedDateTime.now().plusDays(30))
+                        .couponCreatedAt(ZonedDateTime.now())
+                        .couponIsActive(true)
+                        .couponUsedAt(null)
+                        .build()
+        );
+
+        // when
+        when(couponService.getCouponsByCouponName(couponName)).thenReturn(coupons);
+
+        // then
+        mockMvc.perform(get("/api/coupons/{couponName}/name", couponName))
+                .andExpect(status().isOk())  // 상태 코드 200 OK
+                .andExpect(jsonPath("$.length()").value(2))  // 응답이 2개의 쿠폰인지 확인
+                .andExpect(jsonPath("$[0].couponName").value("New Year Coupon"))  // 첫 번째 쿠폰 이름 확인
+                .andExpect(jsonPath("$[1].couponName").value("New Year Coupon"))  // 두 번째 쿠폰 이름 확인
+                .andDo(document("get-coupons-by-name",  // 문서화
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        pathParameters(  // path 파라미터 문서화
+                                parameterWithName("couponName").description("조회할 쿠폰 이름")
+                        ),
+                        responseFields(  // 응답 필드 문서화
+                                fieldWithPath("[].couponId").description("쿠폰 ID"),
+                                fieldWithPath("[].couponName").description("쿠폰 이름"),
+                                fieldWithPath("[].couponTarget").description("쿠폰 대상"),
+                                fieldWithPath("[].couponTargetId").description("쿠폰 대상 ID"),
+                                fieldWithPath("[].couponDeadline").description("쿠폰 유효 기간"),
+                                fieldWithPath("[].couponCreatedAt").description("쿠폰 생성일"),
+                                fieldWithPath("[].couponIsActive").description("쿠폰 활성화 여부"),
+                                fieldWithPath("[].couponUsedAt").description("쿠폰 사용일").optional(),
+                                fieldWithPath("[].couponPolicy").description("쿠폰 정책"),
+                                fieldWithPath("[].couponPolicy.couponPolicyId").description("쿠폰 정책 ID"),
+                                fieldWithPath("[].couponPolicy.couponPolicyName").description("쿠폰 정책 이름"),
+                                fieldWithPath("[].couponPolicy.minPurchaseAmount").description("최소 구매 금액"),
+                                fieldWithPath("[].couponPolicy.discountType").description("할인 유형"),
+                                fieldWithPath("[].couponPolicy.discountValue").description("할인 값"),
+                                fieldWithPath("[].couponPolicy.maxDiscountAmount").description("최대 할인 금액"),
+                                fieldWithPath("[].couponPolicy.eventType").description("이벤트 유형").optional(),
+                                fieldWithPath("[].couponPolicy.createdAt").description("쿠폰 정책 생성일"),
+                                fieldWithPath("[].couponPolicy.deleted").description("쿠폰 정책 삭제 여부")
+                        )
+                ));
+    }
 }

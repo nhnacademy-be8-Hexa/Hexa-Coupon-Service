@@ -18,9 +18,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -234,6 +232,25 @@ class CouponServiceTest {
         assertNotNull(coupons);
         assertTrue(coupons.isEmpty());
         verify(couponRepository, never()).findByCouponIdInAndCouponIsActive(anyList(), anyBoolean());
+    }
+
+    @Test
+    @DisplayName("쿠폰 이름으로 쿠폰 조회")
+    void testGetCouponsByCouponName() {
+        // given
+        String couponName = "New Year Coupon";
+        List<Coupon> coupons = Collections.singletonList(coupon);
+
+        when(couponRepository.findByCouponName(couponName)).thenReturn(coupons);
+
+        // when
+        List<Coupon> foundCoupons = couponService.getCouponsByCouponName(couponName);
+
+        // then
+        assertNotNull(foundCoupons);
+        assertEquals(1, foundCoupons.size());
+        assertEquals("New Year Coupon", foundCoupons.get(0).getCouponName());
+        verify(couponRepository, times(1)).findByCouponName(couponName);
     }
 
 }
